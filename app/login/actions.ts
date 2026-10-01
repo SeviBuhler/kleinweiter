@@ -18,3 +18,11 @@ export async function verifyCode(_state:{message:string},form:FormData){
  if(error)return {message:'Der Code ist ungültig oder abgelaufen. Fordere einen neuen Code an.'};
  redirect('/');
 }
+
+export async function signInGoogle(_state:{message:string},_form:FormData){
+ if(!configured()||process.env.NEXT_PUBLIC_DEMO_MODE==='true'||process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED!=='true')return {message:'Google-Anmeldung ist noch nicht eingerichtet.'};
+ const db=await supabase();
+ const {data,error}=await db.auth.signInWithOAuth({provider:'google',options:{redirectTo:appOrigin()+'/auth/callback',skipBrowserRedirect:true,queryParams:{prompt:'select_account'}}});
+ if(error||!data.url)return {message:'Google-Anmeldung konnte nicht gestartet werden. Bitte später erneut versuchen.'};
+ redirect(data.url);
+}
