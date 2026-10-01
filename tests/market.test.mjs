@@ -19,6 +19,7 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  create function storage.foldername(name text) returns text[] language sql as $$ select string_to_array(name,'/') $$;
  `);
  await db.exec(await readFile(new URL('../supabase/migrations/20261001000100_market.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../supabase/migrations/20261001000200_function_storage.sql',import.meta.url),'utf8'));
  const seller='11111111-1111-4111-8111-111111111111',buyer='22222222-2222-4222-8222-222222222222',image='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
  await db.query('insert into auth.users values ($1,$2,now()),($3,$4,now())',[seller,'seller@example.test',buyer,'buyer@example.test']);
  const identity=async(id)=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec(`set role ${id?'authenticated':'anon'}`);};
@@ -26,7 +27,8 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  const feed=async(age,mine=false)=>(await db.query('select public.market_feed($1,$2) result',[age,mine])).rows[0].result;
  const listing={action:'create',title:'Regenjacke Grösse 104',description:'Gut erhaltene Regenjacke ohne Löcher, frisch gewaschen.',age:1,category:'Kleidung',condition:'Gut',size:'104 / 4 Jahre',location:'8000 Zürich',delivery:'Abholung nach Absprache',shipping:0,start:1000,buy:3000,days:1,image,childrenOnly:true};
  await identity(seller);
- await db.query('insert into public.uploads(id,owner,path) values($1,$2,$3)',[image,seller,seller+'/'+image]);
+ await assert.rejects(db.query('insert into public.uploads(id,owner,path) values($1,$2,$3)',[image,seller,seller+'/'+image]),/permission denied/);
+ assert.equal((await db.query('select public.register_upload($1) result',[image])).rows[0].result.path,seller+'/'+image);
  await db.query("insert into storage.objects(bucket_id,name) values('product-images',$1)",[seller+'/'+image]);
  await assert.rejects(action({...listing,age:5}));
  await assert.rejects(action({...listing,childrenOnly:false}));
@@ -42,7 +44,9 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  await assert.rejects(feed(null,true),/anmelden/);
  await assert.rejects(action({action:'buy',id,confirm:true}),/permission denied/);
  await identity(buyer);
- assert.equal((await db.query('select * from public.uploads')).rows.length,0);
+ await assert.rejects(db.query('select * from public.uploads'),/permission denied/);
+ assert.equal((await db.query('select public.can_read_image($1) ok',[seller+'/'+image])).rows[0].ok,true);
+ await assert.rejects(db.query("insert into storage.objects(bucket_id,name) values('product-images',$1)",[buyer+'/unreserved']),/row-level security/);
  await assert.rejects(action({...listing}),/eigenes Produktfoto/);
  await assert.rejects(action({action:'bid',id,amount:1000,confirm:false}),/bestätigen/);
  await assert.rejects(action({action:'bid',id,amount:1000,confirm:'true'}),/bestätigen/);

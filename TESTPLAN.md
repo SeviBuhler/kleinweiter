@@ -1,8 +1,8 @@
 # Pilotprüfung nach Anbindung
 
-Noch nicht mit echten Konten durchgeführt. Zwei erwachsene Tester A (Verkäufer) und B (Käufer), getrennte Browserprofile oder ein privates Fenster verwenden. Ausschliesslich Testartikel ohne reale Kaufabsicht; danach Supabase-Testprojekt zurücksetzen oder Testdaten gezielt administrativ entfernen. Die SQL-Migration niemals einfach nochmals ausführen.
+Datenbankfunktionen und Berechtigungen wurden im echten Supabase-Projekt mit transienten Identitäten geprüft; alle Testdaten wurden zurückgerollt. Zusätzlich war der Live-API-Test erfolgreich. E-Mail-Anmeldung und komplette Oberfläche wurden noch nicht mit zwei echten Konten geprüft. Zwei erwachsene Tester A (Verkäufer) und B (Käufer), getrennte Browserprofile oder ein privates Fenster verwenden. Ausschliesslich Testartikel ohne reale Kaufabsicht; danach Supabase-Testprojekt zurücksetzen oder Testdaten gezielt administrativ entfernen. Die SQL-Migration niemals einfach nochmals ausführen.
 
-1. A und B erhalten je einen E-Mail-Code, melden sich an, laden die Seite neu und melden sich wieder ab. Abgelaufene/falsche Codes werden abgelehnt. Sitzungserneuerung nach Tokenablauf prüfen.
+1. A und B erhalten je einen einmaligen Anmeldelink (im gleichen Browser öffnen) oder optional einen E-Mail-Code, melden sich an, laden die Seite neu und melden sich wieder ab. Abgelaufene/falsche Links bzw. Codes werden abgelehnt. Sitzungserneuerung nach Tokenablauf prüfen.
 2. A lädt eigenes JPG/PNG/WebP bis 4 MB hoch. Grössere Bilder, HTML und SVG werden abgelehnt. B kann As unveröffentlichtes Foto nicht ansehen oder verwenden.
 3. A stellt ein Inserat ein, z. B. Alterswelt 3–6, Start CHF 10, Sofortkauf CHF 30. Suche, Kategorie, mobile Darstellung und Anzeigename prüfen.
 4. A darf nicht selbst bieten. B muss das Gebot ausdrücklich bestätigen. CHF 9.99 scheitert; CHF 10 ist als Erstgebot zulässig; danach liegt das Minimum bei CHF 11. Ein Gebot ab CHF 30 verweist auf Sofortkauf.

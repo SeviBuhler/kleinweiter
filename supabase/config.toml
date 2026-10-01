@@ -13,6 +13,7 @@ major_version = 17
 enabled = true
 # Before GitHub production sync: replace with your actual Vercel HTTPS address.
 site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback", "http://127.0.0.1:3000/auth/callback"]
 enable_signup = true
 jwt_expiry = 3600
 
@@ -22,10 +23,5 @@ enable_confirmations = true
 otp_length = 8
 otp_expiry = 600
 
-[auth.email.template.magic_link]
-subject = "Dein Anmeldecode für kleinweiter"
-content_path = "./supabase/templates/otp.html"
-
-[auth.email.template.confirmation]
-subject = "Dein Anmeldecode für kleinweiter"
-content_path = "./supabase/templates/otp.html"
+# Hosted Free project uses default link templates. With custom SMTP, the optional
+# templates/otp.html can be configured in the Dashboard to send OTP codes instead.
