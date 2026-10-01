@@ -11,9 +11,9 @@ major_version = 17
 
 [auth]
 enabled = true
-# Before GitHub production sync: replace with your actual Vercel HTTPS address.
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["http://localhost:3000/auth/callback", "http://127.0.0.1:3000/auth/callback"]
+# Production URL; exact localhost callbacks remain available for local development.
+site_url = "https://kleinweiter.vercel.app"
+additional_redirect_urls = ["https://kleinweiter.vercel.app/auth/callback", "http://localhost:3000/auth/callback", "http://127.0.0.1:3000/auth/callback"]
 enable_signup = true
 jwt_expiry = 3600
 

@@ -4,7 +4,7 @@ Schweizer Secondhand-WebApp für Kinderartikel, aufgebaut auf dem vorhandenen De
 
 ## Verbundenes Projekt
 
-Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Beide Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Als Rücksprungadresse ist vorerst `http://localhost:3000/auth/callback` eingerichtet.
+Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Beide Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
 
 ## Lokal starten
 
@@ -40,14 +40,14 @@ Für die reine Vorschau brauchst du keine Supabase-Schlüssel. Optional `NEXT_PU
 2. Für den einfachen Start im **SQL Editor** beide Dateien aus `supabase/migrations/` in aufsteigender Reihenfolge **einmal** auf einem frischen Projekt ausführen. Nicht erneut auf einem bereits migrierten Projekt ausführen.
 3. Alternativ die offizielle Supabase-GitHub-Integration verwenden: Migration und `supabase/config.toml` sind vorbereitet. Vor Produktionssync `auth.site_url` und `auth.additional_redirect_urls` in `config.toml` auf deine Vercel-HTTPS-Adresse und deren `/auth/callback` ändern. Produktionsbranch `main` bewusst auswählen und **Deploy to production** konfigurieren. Automatische Preview-Branches sind optional; vor Aktivierung die Kosten prüfen. Wähle einen Migrationsweg und mische ihn nicht mit manueller SQL-Ausführung. Bei bereits manuell angewandter Migration zuerst die Migrationshistorie mit Supabase CLI abgleichen.
 4. Standardmässig die Supabase-Anmeldelink-Vorlagen beibehalten. Die App verarbeitet den PKCE-Callback. Codes haben acht Stellen; Codes und Links sind zehn Minuten gültig. Eigene OTP-Vorlagen aus `supabase/templates/otp.html` sind optional und brauchen auf diesem Free-Projekt eigenen SMTP-Versand oder Pro; dann Magic Link und Confirm signup anpassen.
-5. Unter Auth URL Configuration die Vercel-Adresse als Site URL setzen und exakt `https://DEINE-APP.vercel.app/auth/callback` zu Redirect URLs hinzufügen. `NEXT_PUBLIC_SITE_URL` in Vercel muss dieselbe App-Adresse enthalten. Für einen kleinen geschlossenen Pilotversuch neue Registrierungen deaktivieren und die Tester im Supabase-Dashboard anlegen. `shouldCreateUser: true` im Client umgeht eine deaktivierte Registrierung nicht.
+5. Unter Auth URL Configuration die Vercel-Adresse als Site URL setzen und exakt `https://kleinweiter.vercel.app/auth/callback` zu Redirect URLs hinzufügen. `NEXT_PUBLIC_SITE_URL` in Vercel muss dieselbe App-Adresse enthalten. Für einen kleinen geschlossenen Pilotversuch neue Registrierungen deaktivieren und die Tester im Supabase-Dashboard anlegen. `shouldCreateUser: true` im Client umgeht eine deaktivierte Registrierung nicht.
 6. Für fremde Testpersonen eigenen SMTP-Versand konfigurieren. Supabase-Standardversand ist eingeschränkt; ein Free-Datenbankprojekt garantiert keinen kostenlosen E-Mail-Versand an beliebige Empfänger. Bei breiterer Freigabe zusätzlich Supabase CAPTCHA aktivieren und in der Anmeldemaske anbinden.
 7. `.env.example` nach `.env.local` kopieren und diese Werte eintragen. Dieselben Variablen auf Vercel für die gewünschte Umgebung setzen:
 
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=https://DEIN-PROJEKT.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
-NEXT_PUBLIC_SITE_URL=https://DEINE-APP.vercel.app
+NEXT_PUBLIC_SITE_URL=https://kleinweiter.vercel.app
 NEXT_PUBLIC_DEMO_MODE=false
 ```
 
@@ -83,3 +83,7 @@ Das Desktop-Original wurde nur gelesen. Die bisherige Cloudflare-/Sites-Statusbe
 - [Supabase-Zugriffsregeln / RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)
 - [Supabase-Free-Grenzen](https://supabase.com/docs/guides/platform/billing-on-supabase)
 - [Vercel Hobby](https://vercel.com/docs/plans/hobby)
+
+## Aktuelles Vercel-Deployment
+
+Die veröffentlichte Seite wurde am 1. Oktober 2026 geprüft und zeigt noch die Designvorschau. In Vercel unter Project Settings → Environment Variables die Supabase-URL und den öffentlichen Publishable-Key aus der lokalen, Git-ignorierten .env.local übernehmen, NEXT_PUBLIC_SITE_URL=https://kleinweiter.vercel.app und NEXT_PUBLIC_DEMO_MODE=false setzen. Danach neu deployen. Lokal bleibt NEXT_PUBLIC_SITE_URL=http://localhost:3000.
