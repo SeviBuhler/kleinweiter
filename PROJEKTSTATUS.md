@@ -16,15 +16,15 @@ Alterswelten, Suche, Kategorien, CHF-Auktionen, Sofortkauf, eigene Fotos, Anzeig
 
 RLS und entzogene direkte Tabellenrechte schützen die Daten. Schreiben erfolgt durch geprüfte PostgreSQL-Funktionen. Privat gespeicherte Rasterbilder sind auf 4 MB begrenzt. Anmeldung verwendet Supabase Auth und einen serverseitigen PKCE-Callback.
 
-Neue Inseratverwaltung: eigene aktive Inserate lassen sich vor dem ersten Gebot bearbeiten oder zurückziehen. Preis und Auktionsende bleiben beim Bearbeiten unverändert. Zurückgezogene Inserate bleiben im Konto und verschwinden aus der Suche. Datenbanksperren und Versionsprüfung verhindern Änderungen bei inzwischen eingegangenen Geboten oder veralteten Formularen. Die neue Oberfläche benötigt den nächsten GitHub-Push und Vercel-Build.
+Neue Inseratverwaltung: eigene aktive Inserate lassen sich vor dem ersten Gebot bearbeiten oder zurückziehen. Preis und Auktionsende bleiben beim Bearbeiten unverändert. Zurückgezogene Inserate bleiben im Konto und verschwinden aus der Suche. Datenbanksperren und Versionsprüfung verhindern Änderungen bei inzwischen eingegangenen Geboten oder veralteten Formularen. Die neue Oberfläche ist mit Commit `120d784` auf GitHub und Vercel veröffentlicht.
 
 ## Prüfung
 
 Installation, Produktionsbuild und drei automatische Tests erfolgreich. SQL-Tests prüfen mit zwei Identitäten Eigentum, Bearbeiten, veraltete Änderungen, Zurückziehen, Gebotssperren, Kauf und Kontaktrechte. Live-Supabase-Tests verwenden eine Transaktion mit vollständigem Rollback und bestanden ebenfalls.
 
-Mit zwei echten Google-Konten wurden Anmeldung, Foto-Upload, Inseraterstellung und Eigentum geprüft. Ein ausdrücklich als Test markiertes Inserat erhielt ein gültiges Gebot; ein zu niedriges Gebot wurde abgelehnt. Der Sofortkauf wurde bestätigt und entfernte das Angebot aus der öffentlichen Suche. Es fand keine Zahlung statt. Der Testartikel verbleibt als Verkaufshistorie.
+Mit zwei echten Google-Konten wurden Anmeldung, Foto-Upload, Inseraterstellung und Eigentum geprüft. Ein ausdrücklich als Test markiertes Inserat erhielt ein gültiges Gebot; ein zu niedriges Gebot wurde abgelehnt. Der Sofortkauf wurde bestätigt und entfernte das Angebot aus der öffentlichen Suche. Es fand keine Zahlung statt. Kaufhistorie und gegenseitige Kontaktanzeige wurden auf beiden echten Kontoseiten bestätigt. Der Testartikel verbleibt als Verkaufshistorie. Ein zweiter klar markierter Testartikel wurde auf Vercel bearbeitet, nach Neuladen mit geändertem Titel geprüft und zurückgezogen. Abbrechen des Bestätigungsdialogs liess ihn aktiv. Nach Zurückziehen bleibt er im Konto sichtbar und fehlt im öffentlichen Feed (HTTP 200, leere Angebote).
 
-Noch nicht vollständig geprüft: Kontaktanzeige auf beiden echten Kontoseiten, neue Verwaltungsoberfläche nach Deployment, gleichzeitige Handelsaktionen sowie Session-Erneuerung über längere Zeit. Die Browser-Anmeldung war bei der Fortsetzung abgelaufen; erneute Anmeldung ist erforderlich.
+Noch offen: gleichzeitige Handelsaktionen auf dem gehosteten System und Session-Erneuerung über längere Zeit. Datenbanksperren sind implementiert; die bisherigen Tests ersetzen keinen echten Paralleltest.
 
 ## Vor breiterem Einsatz
 

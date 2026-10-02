@@ -87,4 +87,4 @@ Das Desktop-Original wurde nur gelesen. Die bisherige Cloudflare-/Sites-Statusbe
 
 ## Aktuelles Vercel-Deployment
 
-Google-Anmeldung und Supabase sind live eingerichtet. Der lokale Stand mit Inseratverwaltung muss noch nach GitHub gepusht werden; Vercel baut danach automatisch. Die neue Datenbankmigration ist bereits angewandt. Aktuelle Prüfergebnisse und offene Punkte stehen in `PROJEKTSTATUS.md`.
+Google-Anmeldung und Supabase sind live eingerichtet. Inseratverwaltung ist mit Commit `120d784` nach GitHub gepusht und auf Vercel veröffentlicht. Bearbeiten und Zurückziehen wurden dort erfolgreich geprüft. Die neue Datenbankmigration ist bereits angewandt. Aktuelle Prüfergebnisse und offene Punkte stehen in `PROJEKTSTATUS.md`.
