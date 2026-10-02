@@ -6,7 +6,7 @@ Next.js/React/TypeScript, Vercel und Supabase ersetzen den ursprünglichen Vinex
 
 - GitHub: https://github.com/SeviBuhler/kleinweiter.git. Der Nutzer pusht lokale Commits selbst.
 - Website: https://kleinweiter.vercel.app. Supabase- und Google-Login-Variablen sind in Vercel gesetzt; Google-Anmeldung ist veröffentlicht.
-- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200` , `20261002000100` , `20261002000200` und `20261002000300` sind angewandt und registriert.
+- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200`, `20261002000100`, `20261002000200` und `20261002000300` sind angewandt und registriert.
 - Google-OAuth-Projekt: `kleinweiter-sevi-20261001`. Google-Anmeldung funktioniert mit beiden Testkonten. Freigabe für weitere Tester hängt vom Google-Audience-Status ab.
 - Keine Zugangsdaten im Git. Lokale Umgebungsdatei ist ignoriert. Kein service_role-Key in der App.
 
@@ -28,7 +28,7 @@ Noch offen: gleichzeitige Handelsaktionen auf dem gehosteten System und Session-
 
 ## Neue Meldefunktion
 
-Angemeldete Nutzer können fremde aktive Inserate melden. Grund und Beschreibung sind erforderlich. Eine Meldung je Konto/Inserat und zehn pro 24 Stunden; keine direkten Tabellenrechte. Der damalige Inseratstand wird privat als Snapshot gespeichert. Nur der Datenbankbetreiber kann Prüfergebnisse über `review_listing_report` dokumentieren. Die Auktion bleibt aktiv; kein automatisches Sperren oder Stornieren. Anleitung: `MODERATION.md`.
+Angemeldete Nutzer können fremde aktive Inserate melden. Grund und Beschreibung sind erforderlich. Eine Meldung je Konto/Inserat und zehn pro 24 Stunden; keine direkten Tabellenrechte. Der damalige Inseratstand wird privat als Snapshot gespeichert. Explizit freigeschaltete Moderatoren dokumentieren Prüfergebnisse über `/moderation`. Eine Meldung allein lässt die Auktion aktiv; kein automatisches Sperren oder Stornieren. Anleitung: `MODERATION.md`.
 
 Die Datenbankmigration ist angewandt. Automatische Rechte-/Funktionstests und Produktionsbuild bestanden. Commit `546f64d` ist auf GitHub und Vercel veröffentlicht. Mit zwei echten Google-Konten wurden Testinserat, Meldespeicherung, Bestätigung und Ablehnung einer Doppelmeldung geprüft. Supabase zeigte genau eine offene Meldung mit passendem Snapshot; sie wurde per Funktion als technischer Test abgeschlossen (`dismissed`). Die Meldung liess Preis, Gebote und aktiven Angebotsstatus unverändert. Der Verkäufer zog den Testartikel anschliessend zurück.
 
@@ -36,7 +36,9 @@ Die Datenbankmigration ist angewandt. Automatische Rechte-/Funktionstests und Pr
 
 `/moderation` mit expliziter Datenbankrolle, Meldungs-/Inseratvergleich, Prüfentscheidungen und Sperre laufender Auktionen. Eine Sperre bleibt für Verkäufer und Bieter mit Begründung sichtbar; sie sperrt Gebote und Sofortkauf und verbirgt das Produktfoto vor öffentlichem Zugriff, soweit es nicht auch an ein anderes freigegebenes Inserat gebunden ist. Keine Wiederfreigabe und keine nachträgliche Stornierung abgeschlossener Käufe. Jede Entscheidung wird privat protokolliert. Rollen können nicht über die App vergeben werden.
 
-Automatische Datenbanktests mit drei Identitäten und Produktionsbuild bestanden. Migration ist angewandt, noch kein echtes Konto freigeschaltet. Browser-Test und Veröffentlichung stehen aus.
+Automatische Datenbanktests mit drei Identitäten, Live-Supabase-Tests mit vollständigem Rollback und Produktionsbuild bestanden. Migration ist angewandt. Commit `e03d579` ist auf GitHub und Vercel veröffentlicht. Nach ausdrücklicher Zustimmung wurde ausschliesslich das verifizierte Hauptkonto `sevibuhler@gmail.com` als Betreiber freigeschaltet. Das zweite Google-Konto erhält keinen Moderationszugang; `/moderation` liefert dort 404. Anonyme API-Aufrufe werden mit 403 abgewiesen.
+
+Mit beiden echten Google-Konten wurde eine ausdrücklich technische Testauktion erstellt, mit einem Testgebot versehen, gemeldet und durch das Hauptkonto gesperrt. Sie verschwindet aus dem öffentlichen Feed; ihr privates Foto liefert anonym 404. Ein bereits vor der Sperre geöffneter Sofortkaufdialog wurde beim Absenden abgewiesen. Preis und Gebot bleiben als Historie erhalten. Käufer und Verkäufer sehen in ihrem Konto den Status «Von Moderation gesperrt» und die gespeicherte Begründung. Die geschlossene Meldung erscheint im Moderationsarchiv. Keine Zahlung, Lieferung oder reale Anschuldigung erfolgte; die gesperrte Testauktion bleibt zur Nachvollziehbarkeit gespeichert.
 
 ## Vor breiterem Einsatz
 
