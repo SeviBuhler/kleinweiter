@@ -6,7 +6,7 @@ Next.js/React/TypeScript, Vercel und Supabase ersetzen den ursprünglichen Vinex
 
 - GitHub: https://github.com/SeviBuhler/kleinweiter.git. Der Nutzer pusht lokale Commits selbst.
 - Website: https://kleinweiter.vercel.app. Supabase- und Google-Login-Variablen sind in Vercel gesetzt; Google-Anmeldung ist veröffentlicht.
-- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200`, `20261002000100`, `20261002000200` und `20261002000300` sind angewandt und registriert.
+- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200`, `20261002000100`, `20261002000200` `20261002000300` und `20261002000400` sind angewandt und registriert.
 - Google-OAuth-Projekt: `kleinweiter-sevi-20261001`. Google-Anmeldung funktioniert mit beiden Testkonten. Freigabe für weitere Tester hängt vom Google-Audience-Status ab.
 - Keine Zugangsdaten im Git. Lokale Umgebungsdatei ist ignoriert. Kein service_role-Key in der App.
 
@@ -20,7 +20,7 @@ Neue Inseratverwaltung: eigene aktive Inserate lassen sich vor dem ersten Gebot 
 
 ## Prüfung
 
-Installation, Produktionsbuild und drei automatische Tests erfolgreich. SQL-Tests prüfen mit zwei Identitäten Eigentum, Bearbeiten, veraltete Änderungen, Zurückziehen, Gebotssperren, Kauf und Kontaktrechte. Live-Supabase-Tests verwenden eine Transaktion mit vollständigem Rollback und bestanden ebenfalls.
+Installation, Produktionsbuild und vier automatische Tests erfolgreich. SQL-Tests prüfen mit zwei Identitäten Eigentum, Bearbeiten, veraltete Änderungen, Zurückziehen, Gebotssperren, Kauf und Kontaktrechte. Live-Supabase-Tests verwenden eine Transaktion mit vollständigem Rollback und bestanden ebenfalls.
 
 Mit zwei echten Google-Konten wurden Anmeldung, Foto-Upload, Inseraterstellung und Eigentum geprüft. Ein ausdrücklich als Test markiertes Inserat erhielt ein gültiges Gebot; ein zu niedriges Gebot wurde abgelehnt. Der Sofortkauf wurde bestätigt und entfernte das Angebot aus der öffentlichen Suche. Es fand keine Zahlung statt. Kaufhistorie und gegenseitige Kontaktanzeige wurden auf beiden echten Kontoseiten bestätigt. Der Testartikel verbleibt als Verkaufshistorie. Ein zweiter klar markierter Testartikel wurde auf Vercel bearbeitet, nach Neuladen mit geändertem Titel geprüft und zurückgezogen. Abbrechen des Bestätigungsdialogs liess ihn aktiv. Nach Zurückziehen bleibt er im Konto sichtbar und fehlt im öffentlichen Feed (HTTP 200, leere Angebote).
 
@@ -40,6 +40,12 @@ Automatische Datenbanktests mit drei Identitäten, Live-Supabase-Tests mit volls
 
 Mit beiden echten Google-Konten wurde eine ausdrücklich technische Testauktion erstellt, mit einem Testgebot versehen, gemeldet und durch das Hauptkonto gesperrt. Sie verschwindet aus dem öffentlichen Feed; ihr privates Foto liefert anonym 404. Ein bereits vor der Sperre geöffneter Sofortkaufdialog wurde beim Absenden abgewiesen. Preis und Gebot bleiben als Historie erhalten. Käufer und Verkäufer sehen in ihrem Konto den Status «Von Moderation gesperrt» und die gespeicherte Begründung. Die geschlossene Meldung erscheint im Moderationsarchiv. Keine Zahlung, Lieferung oder reale Anschuldigung erfolgte; die gesperrte Testauktion bleibt zur Nachvollziehbarkeit gespeichert.
 
+## Benachrichtigungen in der WebApp
+
+Private Nachrichten bei Übergeboten, Sofortkäufen, Auktionsabschluss (Gewinn/Verkauf oder ohne Gebot) und Moderationssperren. Glocke mit Ungelesen-Zähler, Einzel-/Sammelmarkierung und Angebotslink zum betroffenen Kontoeintrag. RLS und entzogene Tabellenrechte; nur bestätigte Konten können ihre eigenen Nachrichten per Funktion lesen und markieren. Transaktionaler Trigger schreibt Ereignisse gemeinsam mit der Angebotsänderung. Keine rückwirkenden Nachrichten für Altbestände, keine E-Mails oder Browser-Pushs.
+
+Migration `20261002000400` ist angewandt und registriert. Vier automatische Tests und Produktionsbuild bestanden. Live-Supabase-Test mit synthetischen Identitäten und vollständigem Rollback prüfte Empfänger, Übergebot, Kauf, Verkäufernachricht, fremde Lesemarkierung und Duplikatvermeidung. Veröffentlichung und Browser-Test der neuen Oberfläche stehen noch aus. Auktionsende wird beim nächsten Markt-/Benachrichtigungsabruf festgestellt; ohne Abruf gibt es noch keinen zeitgesteuerten Abschluss. Anleitung: `BENACHRICHTIGUNGEN.md`.
+
 ## Vor breiterem Einsatz
 
-Kleine geschlossene Testphase empfohlen. Benachrichtigungen und Klärung abgeschlossener Verkäufe, Accountlöschung, Betriebs-/Datenschutzinformationen, Backups und Bereinigung verwaister Uploads fehlen. Automatische Inhaltsprüfung und integrierte Zahlungen sind nicht implementiert.
+Kleine geschlossene Testphase empfohlen. E-Mail-Benachrichtigungen, zeitgesteuerter Auktionsabschluss und Klärung abgeschlossener Verkäufe, Accountlöschung, Betriebs-/Datenschutzinformationen, Backups und Bereinigung verwaister Uploads fehlen. Automatische Inhaltsprüfung und integrierte Zahlungen sind nicht implementiert.
