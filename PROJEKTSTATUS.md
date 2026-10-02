@@ -6,7 +6,7 @@ Next.js/React/TypeScript, Vercel und Supabase ersetzen den ursprünglichen Vinex
 
 - GitHub: https://github.com/SeviBuhler/kleinweiter.git. Der Nutzer pusht lokale Commits selbst.
 - Website: https://kleinweiter.vercel.app. Supabase- und Google-Login-Variablen sind in Vercel gesetzt; Google-Anmeldung ist veröffentlicht.
-- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200` und `20261002000100` sind angewandt und registriert.
+- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200` , `20261002000100` und `20261002000200` sind angewandt und registriert.
 - Google-OAuth-Projekt: `kleinweiter-sevi-20261001`. Google-Anmeldung funktioniert mit beiden Testkonten. Freigabe für weitere Tester hängt vom Google-Audience-Status ab.
 - Keine Zugangsdaten im Git. Lokale Umgebungsdatei ist ignoriert. Kein service_role-Key in der App.
 
@@ -26,6 +26,12 @@ Mit zwei echten Google-Konten wurden Anmeldung, Foto-Upload, Inseraterstellung u
 
 Noch offen: gleichzeitige Handelsaktionen auf dem gehosteten System und Session-Erneuerung über längere Zeit. Datenbanksperren sind implementiert; die bisherigen Tests ersetzen keinen echten Paralleltest.
 
+## Neue Meldefunktion
+
+Angemeldete Nutzer können fremde aktive Inserate melden. Grund und Beschreibung sind erforderlich. Eine Meldung je Konto/Inserat und zehn pro 24 Stunden; keine direkten Tabellenrechte. Der damalige Inseratstand wird privat als Snapshot gespeichert. Nur der Datenbankbetreiber kann Prüfergebnisse über `review_listing_report` dokumentieren. Die Auktion bleibt aktiv; kein automatisches Sperren oder Stornieren. Anleitung: `MODERATION.md`.
+
+Die Datenbankmigration ist angewandt. Automatische Rechte-/Funktionstests und Produktionsbuild bestanden. Die neue Oberfläche braucht den nächsten GitHub-Push und Vercel-Build; der echte Browser-Test steht danach an.
+
 ## Vor breiterem Einsatz
 
-Kleine geschlossene Testphase empfohlen. Meldungen, Moderation, Accountlöschung, Betriebs-/Datenschutzinformationen, Backups und Bereinigung verwaister Uploads fehlen. Automatische Inhaltsprüfung und integrierte Zahlungen sind nicht implementiert.
+Kleine geschlossene Testphase empfohlen. Administrative Sperren/Stornierungen, Accountlöschung, Betriebs-/Datenschutzinformationen, Backups und Bereinigung verwaister Uploads fehlen. Automatische Inhaltsprüfung und integrierte Zahlungen sind nicht implementiert.

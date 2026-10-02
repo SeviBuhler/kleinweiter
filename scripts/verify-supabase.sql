@@ -27,6 +27,13 @@ do $$ begin
  begin perform public.market_action(jsonb_build_object('action','bid','id',current_setting('kw.listing'),'amount',999,'confirm',true));raise exception 'LOW_BID_CHECK_FAILED';
  exception when raise_exception then if sqlerrm not like '%niedrig%' then raise; end if; end;
 end $$;
+select public.report_listing(jsonb_build_object('id',current_setting('kw.listing'),'reason','Sonstiges','details','Nur technischer Test, kein echter Verstoss.'));
+do $$ begin
+ if has_table_privilege('authenticated','public.listing_reports','SELECT') or has_table_privilege('authenticated','public.listing_reports','INSERT') then raise exception 'REPORT_PRIVACY_FAILED'; end if;
+ if has_function_privilege('authenticated','public.review_listing_report(uuid,text,text)','EXECUTE') then raise exception 'REPORT_ADMIN_EXPOSED'; end if;
+ begin perform public.report_listing(jsonb_build_object('id',current_setting('kw.listing'),'reason','Sonstiges','details','Zweiter technischer Test'));raise exception 'DUPLICATE_REPORT_FAILED';
+ exception when raise_exception then if sqlerrm not like '%bereits gemeldet%' then raise; end if; end;
+end $$;
 select public.market_action(jsonb_build_object('action','bid','id',current_setting('kw.listing'),'amount',1000,'confirm',true));
 select set_config('request.jwt.claim.sub',current_setting('kw.seller'),true);
 do $$ begin
@@ -51,5 +58,11 @@ do $$ begin
  if jsonb_array_length(public.market_feed(1,false)->'contacts')<>0 then raise exception 'Öffentliche Kontakte'; end if;
 end $$;
 reset role;
+do $$ declare report_id uuid; begin
+ select id into report_id from public.listing_reports where listing=current_setting('kw.listing')::uuid and reporter=current_setting('kw.buyer')::uuid;
+ if report_id is null then raise exception 'REPORT_MISSING'; end if;
+ perform public.review_listing_report(report_id,'dismissed','Technischer Test ohne echten Verstoss');
+ if (select status from public.listing_reports where id=report_id) is distinct from 'dismissed' then raise exception 'REPORT_REVIEW_FAILED'; end if;
+end $$;
 rollback;
-select 'PASS: PostgreSQL functions, editing, ownership, bid withdrawal protection, bids, purchase, privacy and grants. All test data rolled back.' as result;
+select 'PASS: PostgreSQL functions, editing, ownership, bid withdrawal protection, bids, purchase, private reports, review and grants. All test data rolled back.' as result;

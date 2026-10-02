@@ -11,5 +11,5 @@ export async function POST(req:Request){
  if(!tradingEnabled()||!configured())return fail('Dies ist eine Designvorschau. Verkäufe sind noch nicht freigeschaltet.',503);
  if(!await currentUser())return fail('Bitte anmelden.',401);
  if(Number(req.headers.get('content-length')||0)>15000)return fail('Anfrage zu gross.',413);
- try{const body=await req.json();if(!body||typeof body!=='object'||Array.isArray(body))return fail('Ungültige Anfrage.');const db=await supabase();const {data,error}=await db.rpc('market_action',{p_body:body});if(error){console.error(error);return fail(error.code==='P0001'?error.message:'Bitte alle Pflichtfelder vollständig und korrekt ausfüllen.',400);}return Response.json(data);}catch{return fail('Speichern fehlgeschlagen.');}
+ try{const body=await req.json();if(!body||typeof body!=='object'||Array.isArray(body))return fail('Ungültige Anfrage.');const db=await supabase();const {data,error}=await db.rpc(body.action==='report'?'report_listing':'market_action',{p_body:body});if(error){console.error(error);return fail(error.code==='P0001'?error.message:'Bitte alle Pflichtfelder vollständig und korrekt ausfüllen.',400);}return Response.json(data);}catch{return fail('Speichern fehlgeschlagen.');}
 }

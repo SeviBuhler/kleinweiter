@@ -21,10 +21,12 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  await db.exec(await readFile(new URL('../supabase/migrations/20261001000100_market.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../supabase/migrations/20261001000200_function_storage.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../supabase/migrations/20261002000100_manage_listings.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../supabase/migrations/20261002000200_listing_reports.sql',import.meta.url),'utf8'));
  const seller='11111111-1111-4111-8111-111111111111',buyer='22222222-2222-4222-8222-222222222222',image='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
  await db.query('insert into auth.users values ($1,$2,now()),($3,$4,now())',[seller,'seller@example.test',buyer,'buyer@example.test']);
  const identity=async(id)=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec(`set role ${id?'authenticated':'anon'}`);};
  const action=async(body)=>(await db.query('select public.market_action($1::jsonb) result',[JSON.stringify(body)])).rows[0].result;
+ const report=async(body)=>(await db.query('select public.report_listing($1::jsonb) result',[JSON.stringify(body)])).rows[0].result;
  const feed=async(age,mine=false)=>(await db.query('select public.market_feed($1,$2) result',[age,mine])).rows[0].result;
  const listing={action:'create',title:'Regenjacke Grösse 104',description:'Gut erhaltene Regenjacke ohne Löcher, frisch gewaschen.',age:1,category:'Kleidung',condition:'Gut',size:'104 / 4 Jahre',location:'8000 Zürich',delivery:'Abholung nach Absprache',shipping:0,start:1000,buy:3000,days:1,image,childrenOnly:true};
  await identity(seller);
@@ -46,6 +48,7 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  assert.equal((await feed(null,true)).items.find(x=>x.id===withdrawn.id).status,'withdrawn');
  await assert.rejects(action({...listing,action:'edit',id:withdrawn.id,revision:1}),/nicht mehr aktiv/);
 
+ await assert.rejects(report({id,reason:'Sonstiges',details:'Testmeldung ohne echten Anlass'}),/Eigene Inserate/);
  await assert.rejects(action({action:'bid',id,amount:1000,confirm:true}),/eigenes Angebot/);
  await assert.rejects(db.query("update public.listings set price=0 where id=$1",[id]),/permission denied/);
  await identity('');
@@ -53,8 +56,19 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  assert.equal((await feed(1)).contacts.length,0);
  assert.equal('bidder' in (await feed(1)).items[0],false);
  await assert.rejects(feed(null,true),/anmelden/);
+ await assert.rejects(report({id,reason:'Sonstiges',details:'Testmeldung ohne echten Anlass'}),/permission denied/);
+ await assert.rejects(db.query('select * from public.listing_reports'),/permission denied/);
  await assert.rejects(action({action:'buy',id,confirm:true}),/permission denied/);
  await identity(buyer);
+ await assert.rejects(report({id,reason:'Invalid',details:'Testmeldung ohne echten Anlass'}));
+ await assert.rejects(report({id,reason:'Sonstiges',details:'kurz'}));
+ await assert.rejects(report({id:withdrawn.id,reason:'Sonstiges',details:'Testmeldung ohne echten Anlass'}),/nicht mehr/);
+ await report({id,reason:'Sonstiges',details:'Testmeldung ohne echten Anlass'});
+ await assert.rejects(report({id,reason:'Sonstiges',details:'Zweite Meldung desselben Inserats'}),/bereits gemeldet/);
+ await assert.rejects(db.query('select * from public.listing_reports'),/permission denied/);
+ await assert.rejects(db.query('insert into public.listing_reports(listing,reporter,reason,details,snapshot) values($1,$2,$3,$4,$5)',[id,buyer,'Sonstiges','Testmeldung ohne echten Anlass','{}']),/permission denied/);
+ await assert.rejects(db.query('select public.review_listing_report($1,$2,$3)',[id,'reviewed','Test abgeschlossen']),/permission denied/);
+ assert.equal('listing_reports' in (await feed(1)),false);
  await assert.rejects(action({...listing,action:'edit',id,revision:1}),/Nur eigene/);
  await assert.rejects(action({action:'withdraw',id,revision:1,confirm:true}),/Nur eigene/);
  await assert.rejects(db.query('select public.market_trade_action($1::jsonb)',[JSON.stringify(listing)]),/permission denied/);
@@ -88,5 +102,12 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  await identity(seller);
  assert.equal((await feed(null,true)).items.find(x=>x.id===third.id).status,'expired');
  await identity('');assert.equal((await feed(1)).items.length,0);
+ await db.exec('reset role');
+ const reports=(await db.query('select * from public.listing_reports')).rows;
+ assert.equal(reports.length,1);assert.equal(reports[0].reporter,buyer);assert.equal(reports[0].status,'open');
+ assert.equal(reports[0].snapshot.title,'Regenjacke neu beschrieben');
+ await db.query('select public.review_listing_report($1,$2,$3)',[reports[0].id,'dismissed','Nur technischer Test']);
+ assert.equal((await db.query('select status from public.listing_reports')).rows[0].status,'dismissed');
+ await assert.rejects(db.query('select public.review_listing_report($1,$2,$3)',[reports[0].id,'reviewed','Schon abgeschlossen']),/nicht gefunden/);
  await db.close();
 });
