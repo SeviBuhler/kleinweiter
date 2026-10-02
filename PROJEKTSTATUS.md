@@ -1,25 +1,31 @@
-# kleinweiter – Stand 1. Oktober 2026
+# kleinweiter – Stand 2. Oktober 2026
 
-Das Desktop-Projekt wurde nach `outputs/kleinweiter` übernommen und auf Next.js 16, Vercel und Supabase migriert. Bestehendes Design und Kernabläufe wurden weiterverwendet. Cloudflare D1/R2, Vinext und ChatGPT-Header-Anmeldung wurden durch PostgreSQL-Funktionen, Supabase Auth und Storage ersetzt. Fremde Inspirationsfotos wurden durch eigene SVG-Illustrationen ersetzt. Das Desktop-Original blieb unangetastet; die bisherige Sites-Identität liegt im Archiv.
+Next.js/React/TypeScript, Vercel und Supabase ersetzen den ursprünglichen Vinext-/Cloudflare-Aufbau. Das Desktop-Original blieb unverändert. Eigene SVG-Illustrationen ersetzen fremde Inspirationsbilder.
 
-## Eingerichtet
+## Betrieb
 
-Das Git-Repository ist mit https://github.com/SeviBuhler/kleinweiter.git verbunden. Neue Änderungen werden lokal committed; der Nutzer pusht selbst. Der Nutzer hat die App unter https://kleinweiter.vercel.app veröffentlicht. Die Seite zeigt derzeit noch die Designvorschau; die Vercel-Umgebungsvariablen und das neue Deployment stehen aus.
+- GitHub: https://github.com/SeviBuhler/kleinweiter.git. Der Nutzer pusht lokale Commits selbst.
+- Website: https://kleinweiter.vercel.app. Supabase- und Google-Login-Variablen sind in Vercel gesetzt; Google-Anmeldung ist veröffentlicht.
+- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200` und `20261002000100` sind angewandt und registriert.
+- Google-OAuth-Projekt: `kleinweiter-sevi-20261001`. Google-Anmeldung funktioniert mit beiden Testkonten. Freigabe für weitere Tester hängt vom Google-Audience-Status ab.
+- Keine Zugangsdaten im Git. Lokale Umgebungsdatei ist ignoriert. Kein service_role-Key in der App.
 
-Supabase-Projekt `bhogyeublnutiyfjwmou` ist verbunden. Migrationen `20261001000100` und `20261001000200` wurden erfolgreich angewandt und in der Migrationshistorie registriert. Alle Anwendungstabellen sind mit RLS geschützt. Handelsaktionen und Uploadreservierungen laufen ausschliesslich über PostgreSQL-Funktionen. Bildspeicher ist privat und auf 4 MB begrenzt. Profile werden bei Registrierung automatisch angelegt.
+## Funktionen und Sicherheit
 
-E-Mail-Bestätigung ist aktiviert; anonyme Anmeldung ist deaktiviert. Anmeldelinks verwenden einen PKCE-Callback. Codes haben acht Stellen; Codes und Links sind 600 Sekunden gültig. Eigene E-Mail-Vorlagen sind in diesem Free-Projekt ohne SMTP oder Pro nicht verfügbar. Standard-E-Mail-Versand ist auf Supabase-Teamadressen begrenzt; weitere Tester benötigen eigenen SMTP-Versand.
+Alterswelten, Suche, Kategorien, CHF-Auktionen, Sofortkauf, eigene Fotos, Anzeigenamen und Kontoseiten sind vorhanden. Zahlung und Übergabe vereinbaren die Beteiligten direkt. Kontakte werden erst nach Kauf/Auktionsabschluss an Verkäufer und Gewinner freigegeben.
 
-Lokale `.env.local` ist eingerichtet und Git-ignoriert. Die Vercel-Adresse ist https://kleinweiter.vercel.app. Site URL und exakter Produktions-Callback wurden im Supabase-Dashboard gespeichert und geprüft; supabase/config.toml enthält dieselbe Produktionsadresse. Vercel benötigt NEXT_PUBLIC_SITE_URL=https://kleinweiter.vercel.app, die Supabase-Verbindungswerte und NEXT_PUBLIC_DEMO_MODE=false mit anschliessendem Deployment. Lokal bleibt die localhost-Konfiguration erhalten.
+RLS und entzogene direkte Tabellenrechte schützen die Daten. Schreiben erfolgt durch geprüfte PostgreSQL-Funktionen. Privat gespeicherte Rasterbilder sind auf 4 MB begrenzt. Anmeldung verwendet Supabase Auth und einen serverseitigen PKCE-Callback.
 
-## Geprüft
+Neue Inseratverwaltung: eigene aktive Inserate lassen sich vor dem ersten Gebot bearbeiten oder zurückziehen. Preis und Auktionsende bleiben beim Bearbeiten unverändert. Zurückgezogene Inserate bleiben im Konto und verschwinden aus der Suche. Datenbanksperren und Versionsprüfung verhindern Änderungen bei inzwischen eingegangenen Geboten oder veralteten Formularen. Die neue Oberfläche benötigt den nächsten GitHub-Push und Vercel-Build.
 
-Installation und Next.js-Produktionsbuild unter Windows waren erfolgreich; der frühere `spawn EPERM`-Blocker trat bei diesem Aufbau nicht auf. Drei automatische Tests bestanden, darunter SQL-Berechtigungs- und Handelstests mit zwei simulierten Identitäten in einer isolierten PostgreSQL-Engine.
+## Prüfung
 
-Die tatsächlichen PostgreSQL-Funktionen wurden zusätzlich auf Supabase mit zwei transienten Datenbankidentitäten geprüft: Eigentum, Gebote, Kauf, Kontakte und Rechte. Alle Testdaten wurden zurückgerollt. Der direkte Live-API-Test bestätigt öffentliche Angebotssuche und verweigerte anonyme Tabellen-/Schreibzugriffe. Skripte: `scripts/verify-supabase.sql` und `scripts/verify-api.mjs`.
+Installation, Produktionsbuild und drei automatische Tests erfolgreich. SQL-Tests prüfen mit zwei Identitäten Eigentum, Bearbeiten, veraltete Änderungen, Zurückziehen, Gebotssperren, Kauf und Kontaktrechte. Live-Supabase-Tests verwenden eine Transaktion mit vollständigem Rollback und bestanden ebenfalls.
 
-## Noch offen
+Mit zwei echten Google-Konten wurden Anmeldung, Foto-Upload, Inseraterstellung und Eigentum geprüft. Ein ausdrücklich als Test markiertes Inserat erhielt ein gültiges Gebot; ein zu niedriges Gebot wurde abgelehnt. Der Sofortkauf wurde bestätigt und entfernte das Angebot aus der öffentlichen Suche. Es fand keine Zahlung statt. Der Testartikel verbleibt als Verkaufshistorie.
 
-Der Nutzer hat den echten E-Mail-Test vorerst ausgelassen. Anmeldung, Session-Erneuerung und tatsächlicher Foto-Upload mit zwei echten Konten sowie gleichzeitige Gebote auf Vercel müssen noch geprüft werden. Die Datenbanktests ersetzen diese vollständigen Nutzerabläufe nicht.
+Noch nicht vollständig geprüft: Kontaktanzeige auf beiden echten Kontoseiten, neue Verwaltungsoberfläche nach Deployment, gleichzeitige Handelsaktionen sowie Session-Erneuerung über längere Zeit. Die Browser-Anmeldung war bei der Fortsetzung abgelaufen; erneute Anmeldung ist erforderlich.
 
-Die Website ist nicht für echte Verkäufe freigegeben. Automatische Moderation, integrierte Zahlungen, Meldungen, Accountlöschung, Betriebs-/Datenschutzinformationen und Backupabläufe fehlen noch. Zahlung und Übergabe werden direkt vereinbart. Verwaiste Uploads werden noch nicht automatisch gelöscht. README enthält Einrichtungshinweise; TESTPLAN beschreibt die verbleibenden Integrationsprüfungen.
+## Vor breiterem Einsatz
+
+Kleine geschlossene Testphase empfohlen. Meldungen, Moderation, Accountlöschung, Betriebs-/Datenschutzinformationen, Backups und Bereinigung verwaister Uploads fehlen. Automatische Inhaltsprüfung und integrierte Zahlungen sind nicht implementiert.

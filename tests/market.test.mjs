@@ -20,6 +20,7 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  `);
  await db.exec(await readFile(new URL('../supabase/migrations/20261001000100_market.sql',import.meta.url),'utf8'));
  await db.exec(await readFile(new URL('../supabase/migrations/20261001000200_function_storage.sql',import.meta.url),'utf8'));
+ await db.exec(await readFile(new URL('../supabase/migrations/20261002000100_manage_listings.sql',import.meta.url),'utf8'));
  const seller='11111111-1111-4111-8111-111111111111',buyer='22222222-2222-4222-8222-222222222222',image='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
  await db.query('insert into auth.users values ($1,$2,now()),($3,$4,now())',[seller,'seller@example.test',buyer,'buyer@example.test']);
  const identity=async(id)=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec(`set role ${id?'authenticated':'anon'}`);};
@@ -35,6 +36,16 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  await assert.rejects(action({...listing,childrenOnly:'true'}));
  await assert.rejects(action({...listing,start:-1}));
  const {id}=await action(listing);
+ await action({...listing,action:'edit',id,revision:0,title:'Regenjacke neu beschrieben'});
+ assert.equal((await feed(null,true)).items.find(x=>x.id===id).title,'Regenjacke neu beschrieben');
+ await assert.rejects(action({...listing,action:'edit',id,revision:0}),/inzwischen geändert/);
+ await assert.rejects(action({...listing,action:'edit',id,revision:1,age:5}));
+ const withdrawn=await action(listing);
+ await assert.rejects(action({action:'withdraw',id:withdrawn.id,revision:0,confirm:false}),/bestätigen/);
+ await action({action:'withdraw',id:withdrawn.id,revision:0,confirm:true});
+ assert.equal((await feed(null,true)).items.find(x=>x.id===withdrawn.id).status,'withdrawn');
+ await assert.rejects(action({...listing,action:'edit',id:withdrawn.id,revision:1}),/nicht mehr aktiv/);
+
  await assert.rejects(action({action:'bid',id,amount:1000,confirm:true}),/eigenes Angebot/);
  await assert.rejects(db.query("update public.listings set price=0 where id=$1",[id]),/permission denied/);
  await identity('');
@@ -44,6 +55,9 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  await assert.rejects(feed(null,true),/anmelden/);
  await assert.rejects(action({action:'buy',id,confirm:true}),/permission denied/);
  await identity(buyer);
+ await assert.rejects(action({...listing,action:'edit',id,revision:1}),/Nur eigene/);
+ await assert.rejects(action({action:'withdraw',id,revision:1,confirm:true}),/Nur eigene/);
+ await assert.rejects(db.query('select public.market_trade_action($1::jsonb)',[JSON.stringify(listing)]),/permission denied/);
  await assert.rejects(db.query('select * from public.uploads'),/permission denied/);
  assert.equal((await db.query('select public.can_read_image($1) ok',[seller+'/'+image])).rows[0].ok,true);
  await assert.rejects(db.query("insert into storage.objects(bucket_id,name) values('product-images',$1)",[buyer+'/unreserved']),/row-level security/);
@@ -52,6 +66,10 @@ test('PostgreSQL migration and trade permissions with two test identities',async
  await assert.rejects(action({action:'bid',id,amount:1000,confirm:'true'}),/bestätigen/);
  await assert.rejects(action({action:'bid',id,amount:999,confirm:true}),/niedrig/);
  await action({action:'bid',id,amount:1000,confirm:true});
+ await identity(seller);
+ await assert.rejects(action({...listing,action:'edit',id,revision:2}),/ersten Gebot/);
+ await assert.rejects(action({action:'withdraw',id,revision:2,confirm:true}),/ersten Gebot/);
+ await identity(buyer);
  await assert.rejects(action({action:'bid',id,amount:1099,confirm:true}),/niedrig/);
  await assert.rejects(action({action:'bid',id,amount:3000,confirm:true}),/Sofortkaufpreis/);
  assert.equal((await feed(null,true)).contacts.length,0);

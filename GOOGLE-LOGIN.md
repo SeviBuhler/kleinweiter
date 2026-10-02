@@ -1,6 +1,8 @@
 # Google-Anmeldung für kleinweiter
 
-Der Google-Login ist implementiert und verwendet den bestehenden PKCE-Callback mit httpOnly-Sitzungscookies. Produktionsbuild und bestehende Tests bestehen. Noch nicht aktiviert: Supabase benötigt eine Google-OAuth-Client-ID und ein Client-Secret. Die Google-Konsole wartet auf die Anmeldung des Nutzers.
+Google-Login ist live aktiviert und wurde mit zwei echten Konten getestet. Supabase-Provider und Vercel-Schalter sind eingerichtet. Die Anmeldung verwendet den bestehenden PKCE-Callback mit httpOnly-Sitzungscookies. Das Client-Secret liegt ausschliesslich bei Supabase. Projekt: `kleinweiter-sevi-20261001`.
+
+Die folgende Anleitung dokumentiert die Einrichtung. Verbleibende Prüfungen stehen in `PROJEKTSTATUS.md`.
 
 ## Google Auth Platform
 

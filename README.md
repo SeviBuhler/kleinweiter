@@ -4,7 +4,7 @@ Schweizer Secondhand-WebApp für Kinderartikel, aufgebaut auf dem vorhandenen De
 
 ## Verbundenes Projekt
 
-Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Beide Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
+Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Alle drei Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
 
 ## Lokal starten
 
@@ -24,7 +24,6 @@ npm run dev
 Dieses Verzeichnis ist ein Git-Repository auf Branch `main`, verbunden mit [SeviBuhler/kleinweiter](https://github.com/SeviBuhler/kleinweiter). Die neuen Änderungen lokal prüfen und selbst hochladen:
 
 ```powershell
-git remote add origin https://github.com/DEIN-NAME/kleinweiter.git
 git push -u origin main
 ```
 
@@ -37,11 +36,11 @@ Für die reine Vorschau brauchst du keine Supabase-Schlüssel. Optional `NEXT_PU
 ## Supabase verbinden
 
 1. Neues Projekt `kleinweiter` anlegen, Region Europe. Starkes Datenbankpasswort selbst erzeugen und sicher speichern. **Enable Data API** einschalten; **Automatically expose new tables** ausschalten; automatische RLS kann eingeschaltet werden. Die Migration aktiviert RLS selbst und vergibt gezielte Rechte.
-2. Für den einfachen Start im **SQL Editor** beide Dateien aus `supabase/migrations/` in aufsteigender Reihenfolge **einmal** auf einem frischen Projekt ausführen. Nicht erneut auf einem bereits migrierten Projekt ausführen.
+2. Für den einfachen Start im **SQL Editor** alle Dateien aus `supabase/migrations/` in aufsteigender Reihenfolge **einmal** auf einem frischen Projekt ausführen. Nicht erneut auf einem bereits migrierten Projekt ausführen.
 3. Alternativ die offizielle Supabase-GitHub-Integration verwenden: Migration und `supabase/config.toml` sind vorbereitet. Vor Produktionssync `auth.site_url` und `auth.additional_redirect_urls` in `config.toml` auf deine Vercel-HTTPS-Adresse und deren `/auth/callback` ändern. Produktionsbranch `main` bewusst auswählen und **Deploy to production** konfigurieren. Automatische Preview-Branches sind optional; vor Aktivierung die Kosten prüfen. Wähle einen Migrationsweg und mische ihn nicht mit manueller SQL-Ausführung. Bei bereits manuell angewandter Migration zuerst die Migrationshistorie mit Supabase CLI abgleichen.
 4. Standardmässig die Supabase-Anmeldelink-Vorlagen beibehalten. Die App verarbeitet den PKCE-Callback. Codes haben acht Stellen; Codes und Links sind zehn Minuten gültig. Eigene OTP-Vorlagen aus `supabase/templates/otp.html` sind optional und brauchen auf diesem Free-Projekt eigenen SMTP-Versand oder Pro; dann Magic Link und Confirm signup anpassen.
 5. Unter Auth URL Configuration die Vercel-Adresse als Site URL setzen und exakt `https://kleinweiter.vercel.app/auth/callback` zu Redirect URLs hinzufügen. `NEXT_PUBLIC_SITE_URL` in Vercel muss dieselbe App-Adresse enthalten. Für einen kleinen geschlossenen Pilotversuch neue Registrierungen deaktivieren und die Tester im Supabase-Dashboard anlegen. `shouldCreateUser: true` im Client umgeht eine deaktivierte Registrierung nicht.
-6. Für fremde Testpersonen eigenen SMTP-Versand konfigurieren. Supabase-Standardversand ist eingeschränkt; ein Free-Datenbankprojekt garantiert keinen kostenlosen E-Mail-Versand an beliebige Empfänger. Bei breiterer Freigabe zusätzlich Supabase CAPTCHA aktivieren und in der Anmeldemaske anbinden.
+6. Für Google-Anmeldung `GOOGLE-LOGIN.md` beachten; sie benötigt keinen SMTP-Versand. Für fremde Testpersonen bei E-Mail-Anmeldung eigenen SMTP-Versand konfigurieren. Supabase-Standardversand ist eingeschränkt; ein Free-Datenbankprojekt garantiert keinen kostenlosen E-Mail-Versand an beliebige Empfänger. Bei breiterer Freigabe zusätzlich Supabase CAPTCHA aktivieren und in der Anmeldemaske anbinden.
 7. `.env.example` nach `.env.local` kopieren und diese Werte eintragen. Dieselben Variablen auf Vercel für die gewünschte Umgebung setzen:
 
 ```dotenv
@@ -49,6 +48,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://DEIN-PROJEKT.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 NEXT_PUBLIC_SITE_URL=https://kleinweiter.vercel.app
 NEXT_PUBLIC_DEMO_MODE=false
+NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true
 ```
 
 Nur den öffentlichen Publishable-Key verwenden. **Keine Secret-, service_role- oder Datenbankpasswörter in Git oder Browser-Code.** Die App benötigt keinen administrativen Schlüssel. Der Publishable-Key ist kein Sicherheitsgeheimnis; Zugriffsrechte werden durch Auth, RLS und Datenbankfunktionen durchgesetzt. Supabase kann später auch selbst gehostet werden; Betrieb, Updates und Backups liegen dann bei dir.
@@ -57,9 +57,10 @@ Nur den öffentlichen Publishable-Key verwenden. **Keine Secret-, service_role- 
 
 - Fünf verpflichtende Alterswelten mit Farben und Formen: ab 1 Monat bis **unter** 3; 3 bis **unter** 6; 6 bis **unter** 10; 10 bis **unter** 13; 13 bis **einschliesslich** 16 Jahre. Die kurzen Namen `0–3` usw. sind Weltbezeichnungen; die genauen Grenzen stehen bei der Auswahl.
 - CHF-Preise in ganzzahligen Rappen, Suche, Kinderkategorien und Sortierung.
-- E-Mail-Link-Anmeldung (PKCE; optional Codes mit eigener E-Mail-Vorlage), öffentlicher Anzeigename, eigenes Inserat mit einem eigenen Produktfoto (JPG/PNG/WebP, maximal 4 MB wegen Vercels Request-Grenze).
+- Google-Anmeldung (PKCE; siehe `GOOGLE-LOGIN.md`), optional E-Mail-Link-Anmeldung mit eigenem SMTP, öffentlicher Anzeigename, eigenes Inserat mit einem eigenen Produktfoto (JPG/PNG/WebP, maximal 4 MB wegen Vercels Request-Grenze).
 - Auktion mit CHF 1 Mindestschritt, optionaler Sofortkauf und expliziter Kaufbestätigung. Kein Bieten auf eigene Angebote.
 - Datenbanksperre pro Angebot und transaktionale Verarbeitung von Gebot und Verkauf. Ablauf wird nach Erwerb der Sperre erneut geprüft.
+- Eigene aktive Inserate vor dem ersten Gebot bearbeiten oder zurückziehen. Preis und Auktionsende bleiben unverändert; Versionsprüfung verhindert veraltete Änderungen.
 - Kontoübersicht mit Angeboten, Geboten und Käufen. E-Mail-Kontakt erscheint erst nach verkauftem Angebot, nur für Käufer und Verkäufer.
 - Private Bildablage: öffentliche Anzeige nur für Bilder, die an Inserate gebunden sind; unveröffentlichte Uploads sind nur für ihren Eigentümer lesbar.
 - Automatische Profilanlage bei neuer Registrierung; httpOnly-Sitzungscookies, Secure in Produktion, Origin-Prüfung bei API-Schreibzugriffen und Sicherheitsheader.
@@ -86,4 +87,4 @@ Das Desktop-Original wurde nur gelesen. Die bisherige Cloudflare-/Sites-Statusbe
 
 ## Aktuelles Vercel-Deployment
 
-Die veröffentlichte Seite wurde am 1. Oktober 2026 geprüft und zeigt noch die Designvorschau. In Vercel unter Project Settings → Environment Variables die Supabase-URL und den öffentlichen Publishable-Key aus der lokalen, Git-ignorierten .env.local übernehmen, NEXT_PUBLIC_SITE_URL=https://kleinweiter.vercel.app und NEXT_PUBLIC_DEMO_MODE=false setzen. Danach neu deployen. Lokal bleibt NEXT_PUBLIC_SITE_URL=http://localhost:3000.
+Google-Anmeldung und Supabase sind live eingerichtet. Der lokale Stand mit Inseratverwaltung muss noch nach GitHub gepusht werden; Vercel baut danach automatisch. Die neue Datenbankmigration ist bereits angewandt. Aktuelle Prüfergebnisse und offene Punkte stehen in `PROJEKTSTATUS.md`.
