@@ -6,7 +6,7 @@ Next.js/React/TypeScript, Vercel und Supabase ersetzen den ursprünglichen Vinex
 
 - GitHub: https://github.com/SeviBuhler/kleinweiter.git. Der Nutzer pusht lokale Commits selbst.
 - Website: https://kleinweiter.vercel.app. Supabase- und Google-Login-Variablen sind in Vercel gesetzt; Google-Anmeldung ist veröffentlicht.
-- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200`, `20261002000100`, `20261002000200` `20261002000300` und `20261002000400` sind angewandt und registriert.
+- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200`, `20261002000100`, `20261002000200`, `20261002000300` und `20261002000400` sind angewandt und registriert.
 - Google-OAuth-Projekt: `kleinweiter-sevi-20261001`. Google-Anmeldung funktioniert mit beiden Testkonten. Freigabe für weitere Tester hängt vom Google-Audience-Status ab.
 - Keine Zugangsdaten im Git. Lokale Umgebungsdatei ist ignoriert. Kein service_role-Key in der App.
 
@@ -44,7 +44,7 @@ Mit beiden echten Google-Konten wurde eine ausdrücklich technische Testauktion 
 
 Private Nachrichten bei Übergeboten, Sofortkäufen, Auktionsabschluss (Gewinn/Verkauf oder ohne Gebot) und Moderationssperren. Glocke mit Ungelesen-Zähler, Einzel-/Sammelmarkierung und Angebotslink zum betroffenen Kontoeintrag. RLS und entzogene Tabellenrechte; nur bestätigte Konten können ihre eigenen Nachrichten per Funktion lesen und markieren. Transaktionaler Trigger schreibt Ereignisse gemeinsam mit der Angebotsänderung. Keine rückwirkenden Nachrichten für Altbestände, keine E-Mails oder Browser-Pushs.
 
-Migration `20261002000400` ist angewandt und registriert. Vier automatische Tests und Produktionsbuild bestanden. Live-Supabase-Test mit synthetischen Identitäten und vollständigem Rollback prüfte Empfänger, Übergebot, Kauf, Verkäufernachricht, fremde Lesemarkierung und Duplikatvermeidung. Veröffentlichung und Browser-Test der neuen Oberfläche stehen noch aus. Auktionsende wird beim nächsten Markt-/Benachrichtigungsabruf festgestellt; ohne Abruf gibt es noch keinen zeitgesteuerten Abschluss. Anleitung: `BENACHRICHTIGUNGEN.md`.
+Migration `20261002000400` ist angewandt und registriert. Vier automatische Tests und Produktionsbuild bestanden. Live-Supabase-Test mit synthetischen Identitäten und vollständigem Rollback prüfte Empfänger, Übergebot, Kauf, Verkäufernachricht, fremde Lesemarkierung und Duplikatvermeidung. Commit `f1f88df` ist auf GitHub und Vercel veröffentlicht. Mit beiden echten Google-Konten wurde der ausdrücklich technische Testartikel «TEST – Kaufnachricht – kein Verkaufsangebot» erstellt und per Sofortkauf abgeschlossen. Käufer und Verkäufer erhalten je eine eigene Nachricht. Ungelesen-Zähler, Einzel-/Sammelmarkierung und Angebotslinks in beide Kontoseiten funktionieren; der gelesene Zustand bleibt nach Navigation bestehen. Es erfolgten keine Zahlung oder Übergabe. Der Testverkauf bleibt als Historie gespeichert. Anonyme API-Aufrufe liefern 401. Auktionsgewinn und Sperrnachrichten wurden in den automatischen Datenbanktests geprüft; dafür wurde keine weitere dauerhafte Live-Testauktion erstellt. Auktionsende wird beim nächsten Markt-/Benachrichtigungsabruf festgestellt; ohne Abruf gibt es noch keinen zeitgesteuerten Abschluss. Anleitung: `BENACHRICHTIGUNGEN.md`.
 
 ## Vor breiterem Einsatz
 
