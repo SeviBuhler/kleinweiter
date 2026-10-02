@@ -1,0 +1,5 @@
+export type Issue={id:string;role:'buyer'|'seller';reason:string;details:string;created:string;status:'open'|'closed';review_note:string|null;reviewed_at:string|null;review_role:string};
+export type Order={listing:string;title:string;price:number;shipping:number;delivery:string;created:string;revision:number;role:'buyer'|'seller'|'support';seller_name:string;buyer_name:string;contact?:string;paid_at:string|null;payment_received_at:string|null;sent_at:string|null;received_at:string|null;completed_at:string|null;issues:Issue[];events:{action:string;created:string;role:string}[]};
+export const steps=[{action:'paid',field:'paid_at',role:'buyer',label:'Zahlung veranlasst'},{action:'payment_received',field:'payment_received_at',role:'seller',label:'Zahlung erhalten'},{action:'sent',field:'sent_at',role:'seller',label:'Versandt / übergeben'},{action:'received',field:'received_at',role:'buyer',label:'Artikel erhalten'}] as const;
+export const chf=(n:number)=>new Intl.NumberFormat('de-CH',{style:'currency',currency:'CHF'}).format(n/100);
+export const date=(s:string)=>new Date(s).toLocaleString('de-CH',{timeZone:'Europe/Zurich',dateStyle:'short',timeStyle:'short'});

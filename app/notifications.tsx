@@ -3,7 +3,7 @@ import {useCallback,useEffect,useRef,useState} from 'react';
 import {Bell,Check} from 'lucide-react';
 import {Dialog,DialogContent,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 type Message={id:string;listing:string;kind:string;title:string;body:string;created:string;read_at:string|null};
-const labels:Record<string,string>={outbid:'Überboten',purchased:'Sofortkauf bestätigt',won:'Auktion gewonnen',sold:'Artikel verkauft',blocked:'Auktion gesperrt',expired:'Ohne Gebot beendet'};
+const labels:Record<string,string>={outbid:'Überboten',purchased:'Sofortkauf bestätigt',won:'Auktion gewonnen',sold:'Artikel verkauft',blocked:'Auktion gesperrt',expired:'Ohne Gebot beendet',order_update:'Abwicklung aktualisiert',order_issue:'Problem gemeldet',order_review:'Problemprüfung abgeschlossen'};
 export default function Notifications(){
  const [open,setOpen]=useState(false),[items,setItems]=useState<Message[]>([]),[unread,setUnread]=useState(0),[error,setError]=useState(''),[loaded,setLoaded]=useState(false),[busy,setBusy]=useState(false);
  const sequence=useRef(0);

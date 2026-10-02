@@ -4,7 +4,7 @@ Schweizer Secondhand-WebApp für Kinderartikel, aufgebaut auf dem vorhandenen De
 
 ## Verbundenes Projekt
 
-Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Alle sechs Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
+Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Alle sieben Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
 
 ## Lokal starten
 
@@ -17,7 +17,7 @@ npm run dev
 
 Öffne http://localhost:3000. Für einen Produktionsbuild: `npm run build`, dann `npm start`.
 
-`npm test` prüft die echte SQL-Migration in einer isolierten PostgreSQL-Engine (PGlite), inklusive Zugriffsrechten und Abläufen mit drei simulierten Identitäten. `npm run build` prüft zusätzlich TypeScript. GitHub Actions führt beides bei Pushes und Pull Requests aus.
+`npm test` prüft die echte SQL-Migration in einer isolierten PostgreSQL-Engine (PGlite), inklusive Zugriffsrechten und Abläufen mit bis zu vier simulierten Identitäten. `npm run build` prüft zusätzlich TypeScript. GitHub Actions führt beides bei Pushes und Pull Requests aus.
 
 ## GitHub und Vercel: zuerst nur zeigen
 
@@ -64,6 +64,7 @@ Nur den öffentlichen Publishable-Key verwenden. **Keine Secret-, service_role- 
 - Geschützte Betreiberseite `/moderation`: Prüfentscheidungen, Sperre laufender Auktionen und privates Entscheidungsprotokoll. Rollen nur über den Datenbankbetreiber.
 - Private Inseratmeldungen für angemeldete Nutzer, mit Duplikat- und Tageslimit. Manuelle Prüfung in Supabase: `MODERATION.md`.
 - Private Benachrichtigungen mit Glocke, Ungelesen-Zähler, Einzel-/Sammelmarkierung und Angebotslinks. Ereignisse bei Übergeboten, Sofortkäufen, Auktionsende und Moderationssperren entstehen transaktional in PostgreSQL. Details: `BENACHRICHTIGUNGEN.md`.
+- Abwicklung nach Verkauf: fester Gesamtpreis und Bedingungen, Käufer-/Verkäuferbestätigungen, Problemmeldungen mit Lösung oder separater Support-Prüfung. Anleitung: `ABWICKLUNG.md`.
 - Kontoübersicht mit Angeboten, Geboten und Käufen. E-Mail-Kontakt erscheint erst nach verkauftem Angebot, nur für Käufer und Verkäufer.
 - Private Bildablage: öffentliche Anzeige nur für Bilder, die an Inserate gebunden sind; unveröffentlichte Uploads sind nur für ihren Eigentümer lesbar.
 - Automatische Profilanlage bei neuer Registrierung; httpOnly-Sitzungscookies, Secure in Produktion, Origin-Prüfung bei API-Schreibzugriffen und Sicherheitsheader.
@@ -74,7 +75,7 @@ Zahlung und Übergabe werden direkt vereinbart. Ein Produktfoto pro Inserat ist 
 
 Siehe `TESTPLAN.md`. Die bisherigen Tests ersetzen **keinen** Test mit echten Supabase-Konten und Vercel. Insbesondere Auth-E-Mails, Session-Erneuerung, tatsächliche Storage-Regeln und gleichzeitige Gebote auf dem gehosteten System prüfen.
 
-Noch offen: Klärung abgeschlossener Verkäufe, zeitgesteuerter Auktionsabschluss, automatische Text-/Bildprüfung, integrierte Zahlungen, E-Mail-Benachrichtigungen, Accountlöschung, Datenschutz-/Nutzungsinformationen für den tatsächlichen Betreiber und Backup-/Wiederherstellungsablauf. Verwaiste Uploads werden noch nicht automatisch gelöscht. Die Datenbank erzwingt maximal 40 Uploadreservierungen pro Nutzer und 24 Stunden; Storage akzeptiert nur reservierte Bildpfade innerhalb von zehn Minuten. Auch fehlgeschlagene Uploads zählen zur Quote. Direkte Tabellenzugriffe sind gesperrt. Für öffentliche Registrierung zusätzlichen Missbrauchsschutz einrichten. Daher zuerst mit einem kleinen geschlossenen Testkreis arbeiten.
+Noch offen: Stornierungen/Rückzahlungen und weitere Konfliktklärung, zeitgesteuerter Auktionsabschluss, automatische Text-/Bildprüfung, integrierte Zahlungen, E-Mail-Benachrichtigungen, Accountlöschung, Datenschutz-/Nutzungsinformationen für den tatsächlichen Betreiber und Backup-/Wiederherstellungsablauf. Verwaiste Uploads werden noch nicht automatisch gelöscht. Die Datenbank erzwingt maximal 40 Uploadreservierungen pro Nutzer und 24 Stunden; Storage akzeptiert nur reservierte Bildpfade innerhalb von zehn Minuten. Auch fehlgeschlagene Uploads zählen zur Quote. Direkte Tabellenzugriffe sind gesperrt. Für öffentliche Registrierung zusätzlichen Missbrauchsschutz einrichten. Daher zuerst mit einem kleinen geschlossenen Testkreis arbeiten.
 
 ## Herkunft
 
