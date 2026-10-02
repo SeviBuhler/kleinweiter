@@ -30,7 +30,7 @@ Noch offen: gleichzeitige Handelsaktionen auf dem gehosteten System und Session-
 
 Angemeldete Nutzer können fremde aktive Inserate melden. Grund und Beschreibung sind erforderlich. Eine Meldung je Konto/Inserat und zehn pro 24 Stunden; keine direkten Tabellenrechte. Der damalige Inseratstand wird privat als Snapshot gespeichert. Nur der Datenbankbetreiber kann Prüfergebnisse über `review_listing_report` dokumentieren. Die Auktion bleibt aktiv; kein automatisches Sperren oder Stornieren. Anleitung: `MODERATION.md`.
 
-Die Datenbankmigration ist angewandt. Automatische Rechte-/Funktionstests und Produktionsbuild bestanden. Die neue Oberfläche braucht den nächsten GitHub-Push und Vercel-Build; der echte Browser-Test steht danach an.
+Die Datenbankmigration ist angewandt. Automatische Rechte-/Funktionstests und Produktionsbuild bestanden. Commit `546f64d` ist auf GitHub und Vercel veröffentlicht. Mit zwei echten Google-Konten wurden Testinserat, Meldespeicherung, Bestätigung und Ablehnung einer Doppelmeldung geprüft. Supabase zeigte genau eine offene Meldung mit passendem Snapshot; sie wurde per Funktion als technischer Test abgeschlossen (`dismissed`). Die Meldung liess Preis, Gebote und aktiven Angebotsstatus unverändert. Der Verkäufer zog den Testartikel anschliessend zurück.
 
 ## Vor breiterem Einsatz
 
