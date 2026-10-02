@@ -1,32 +1,44 @@
-# Meldungen prüfen
+# Moderation in kleinweiter
 
-Angemeldete Nutzer können fremde aktive Inserate im Detaildialog melden. Ein Grund und eine Beschreibung von 10 bis 1000 Zeichen sind nötig. Es gilt eine Meldung je Konto und Inserat sowie höchstens zehn Meldungen innerhalb von 24 Stunden. Eigene, beendete oder zurückgezogene Angebote sind ausgeschlossen.
+Die Betreiberseite liegt unter `/moderation`. Nur ausdrücklich in `public.moderators` freigeschaltete Supabase-Nutzer erhalten Zugriff. Normale Konten können keine Rollen vergeben, Meldungen lesen oder Moderationsaktionen ausführen. Die Rollenprüfung erfolgt auf der Seite, an der API und erneut in jeder Datenbankfunktion. Es gibt keinen Admin-Schlüssel im Browser.
 
-Meldungen sind keine öffentlichen Kommentare. Anonyme und angemeldete App-Nutzer haben keine direkten Lese- oder Schreibrechte auf `listing_reports`. Die Datenbankfunktion nimmt Meldungen entgegen und speichert den damaligen Inseratstand als Snapshot. Der Verkäufer sieht weder die Meldung noch die meldende Person.
+## Meldung prüfen
 
-## Für den Betreiber
+Die Übersicht zeigt bis zu 200 Meldungen, offene zuerst. Vergleiche die Meldung und den gespeicherten ursprünglichen Inseratstand mit dem aktuellen Angebot. Beide Produktfotos sind verfügbar. Angaben zur meldenden Person werden in der Oberfläche nicht angezeigt.
 
-Im Supabase SQL Editor, mit dem bestehenden Datenbank-Administrationszugang:
+Drei Entscheidungen stehen zur Verfügung:
+
+- **Unbegründet verwerfen:** Meldung abschliessen, Angebot unverändert lassen.
+- **Geprüft, beibehalten:** Prüfung dokumentieren, Angebot unverändert lassen.
+- **Inserat sperren:** Laufende Auktion stoppen und aus der öffentlichen Suche entfernen. Neue Gebote und Sofortkauf sind gesperrt. Auch mit vorhandenen Geboten kann die Moderation eine laufende Auktion stoppen. Preis und Gebotshistorie bleiben erhalten.
+
+Jede Entscheidung braucht eine Begründung von 10 bis 1000 Zeichen und eine Bestätigung. Bei einer Sperre sehen Verkäufer und bisherige Bieter die Begründung in ihrer Kontoübersicht. Keine Identität der meldenden Person oder sensible persönliche Angaben in diese Begründung aufnehmen.
+
+Sperren betreffen ausschliesslich noch laufende Auktionen. Bereits verkaufte oder zeitlich abgelaufene Angebote werden damit nicht nachträglich storniert. Ein seit dem Öffnen des Formulars geändertes Angebot kann erst nach erneuter Prüfung gesperrt werden. Die Datenbank nutzt dieselbe Inseratsperre wie Gebote und Sofortkauf.
+
+Es gibt keine Wiederfreigabe, Rückzahlung oder E-Mail-Benachrichtigung in dieser Version. Die Sperre wird im Konto sichtbar. Zahlung und Übergabe bleiben direkte Absprachen; bei bereits entstandenen Verpflichtungen oder Zahlungen muss der Betreiber die Beteiligten gesondert kontaktieren und den Fall klären.
+
+## Betreiberzugang verwalten
+
+Nur im Supabase SQL Editor als Datenbankbetreiber, nach Prüfung der konkreten Nutzer-ID in Authentication → Users:
 
 ```sql
-select id, listing, reason, details, snapshot, created
-from public.listing_reports
-where status = 'open'
-order by created;
+-- Beispiel-ID ersetzen; nie anhand veränderbarer user_metadata freischalten.
+insert into public.moderators(id)
+values ('00000000-0000-0000-0000-000000000000'::uuid);
 ```
 
-Prüfe Beschreibung und Snapshot. Nach Prüfung den Status mit der geschützten Funktion abschliessen; `reviewed` bedeutet geprüft, `dismissed` bedeutet als unbegründet verworfen. Ersetze die Beispiel-ID und dokumentiere die konkrete Entscheidung:
+Entzug des Zugangs (gilt auch für bereits angemeldete Sitzungen beim nächsten Zugriff):
 
 ```sql
-select public.review_listing_report(
-  '00000000-0000-0000-0000-000000000000'::uuid,
-  'dismissed',
-  'Begründung der Entscheidung'
-);
+delete from public.moderators
+where id = '00000000-0000-0000-0000-000000000000'::uuid;
 ```
 
-Die Funktion ist für App-Nutzer gesperrt. Kein Admin-Schlüssel gehört in die Website. Abgeschlossene Meldungen können mit dieser Funktion nicht nachträglich überschrieben werden.
+Betreiberrechte werden nicht automatisch aus E-Mail-Adressen, Anzeigenamen oder Profilangaben abgeleitet. Das zweite Testkonto erhält keine Betreiberrechte.
 
-**Wichtig:** Der Prüfstatus entfernt kein Inserat und storniert keine Auktion. Meldungen führen nicht automatisch zu einer Sperre. Eine administrative Sperr-/Stornierungsfunktion, Benachrichtigungen an Betroffene und eine eigene Moderationsoberfläche sind weitere Ausbauschritte. Bei laufenden Geboten keine Bedingungen direkt in der Tabelle ändern.
+## Protokoll und bisheriger SQL-Weg
 
-Meldungen können persönliche Angaben enthalten. Zugriff auf das Supabase-Projekt nur berechtigten Personen geben. Eine Aufbewahrungs-/Löschregel für Meldungen muss vor breiterem Betrieb festgelegt werden.
+`moderation_events` speichert Moderator, Meldung, Inserat, Entscheidung, Begründung, Gebotszahl, Preis und Zeitpunkt. App-Nutzer haben keine direkten Tabellenrechte. In der Oberfläche abgeschlossene Meldungen können nicht erneut entschieden werden. Die bisherige `review_listing_report`-Funktion bleibt ausschliesslich für den Datenbankbetreiber verfügbar.
+
+Bei vielen offenen Meldungen ist später eine paginierte Warteschlange nötig. Ebenfalls offen: Benachrichtigungen, gesonderter Stornierungsablauf für abgeschlossene Verkäufe, Wiederfreigabe, Aufbewahrungs-/Löschregeln und regelmässige Kontrolle der Betreiberzugänge.
