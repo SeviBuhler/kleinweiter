@@ -66,6 +66,12 @@ Migration `20261003000200` ist angewandt und registriert. Der Supabase-Job `klei
 
 Sechs automatische Tests und Produktionsbuild bestanden. Live-Supabase-Test mit vollständigem Rollback bestand für Gewinn, Ablauf ohne Gebot, zukünftiges Inserat, festen Versandstand, Duplikatvermeidung und Funktionsrechte. Zwei tatsächlich zeitgesteuerte Läufe am 3. Oktober um 05:09 und 05:10 UTC sind in `cron.job_run_details` als `succeeded` bestätigt. Dafür wurde keine dauerhafte echte Auktion verändert oder neue Kaufzusage abgegeben. Scheduler und Funktion sind bereits live; kein Vercel-Deployment erforderlich. Anleitung und Betriebsskript: `AUKTIONSABSCHLUSS.md` und `scripts/setup-auction-cron.sql`. Der Betriebsskript-Schritt muss bei einem neuen Projekt zusätzlich zur Migration ausgeführt werden. Laufprotokoll-Aufbewahrung und externe Störungsbenachrichtigung sind noch offen.
 
+## Betreiber und Datenschutz
+
+Öffentliche Seiten `/betreiber` und `/datenschutz` mit Links im globalen Fussbereich, auch auf der Anmeldung. Veröffentlicht werden ausschliesslich die freigegebenen Angaben Severin Bühler und sevi.buehler@outlook.com; keine private Postadresse. Die Datenschutzerklärung beschreibt die tatsächlichen Daten, Sichtbarkeit, Dienstleister, Auslandbearbeitung und noch fehlende automatische Löschung. Supabase-Projektregion Frankfurt (eu-central-1) wurde im Dashboard geprüft.
+
+Produktionsbuild und lokale Darstellung sowie Navigation bestanden. Noch nicht auf GitHub/Vercel veröffentlicht: Push und Prüfung der veröffentlichten Seiten stehen aus. Offene Betriebsfragen zu Kontaktadresse, Dienstleisterverträgen und Löschfristen stehen in `BETREIBER-DATENSCHUTZ.md`.
+
 ## Vor breiterem Einsatz
 
-Kleine geschlossene Testphase empfohlen. E-Mail-Benachrichtigungen und Stornierungen/Rückzahlungen, Accountlöschung, Betriebs-/Datenschutzinformationen, Backups und Bereinigung verwaister Uploads fehlen. Automatische Inhaltsprüfung und integrierte Zahlungen sind nicht implementiert.
+Kleine geschlossene Testphase empfohlen. E-Mail-Benachrichtigungen und Stornierungen/Rückzahlungen, Accountlöschung, Nutzungsbedingungen, Backups und Bereinigung verwaister Uploads fehlen. Betreiber-/Datenschutzseiten sind lokal vorbereitet; postalische Kontaktadresse und weitere Betriebsfragen bleiben offen. Automatische Inhaltsprüfung und integrierte Zahlungen sind nicht implementiert.

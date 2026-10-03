@@ -75,11 +75,15 @@ Zahlung und Übergabe werden direkt vereinbart. Fotos lassen sich bei laufenden 
 
 Supabase Cron schliesst fällige Auktionen jede Minute ab, auch ohne Websitebesuch. Funktion und Zeitplan sind live geprüft. Auf einem frischen Projekt nach den Migrationen zusätzlich scripts/setup-auction-cron.sql als postgres ausführen. Betriebsdetails: AUKTIONSABSCHLUSS.md.
 
+## Betreiber und Datenschutz
+
+`/betreiber` und `/datenschutz` sind öffentlich und auf allen Seiten verlinkt. Freigegebener Kontakt: Severin Bühler, sevi.buehler@outlook.com. Private Postadresse wird nicht veröffentlicht. Noch offene Betriebsfragen und Quellen: `BETREIBER-DATENSCHUTZ.md`.
+
 ## Vor dem echten Pilotbetrieb prüfen
 
 Siehe `TESTPLAN.md`. Die bisherigen Tests ersetzen **keinen** Test mit echten Supabase-Konten und Vercel. Insbesondere Auth-E-Mails, Session-Erneuerung, tatsächliche Storage-Regeln und gleichzeitige Gebote auf dem gehosteten System prüfen.
 
-Noch offen: Stornierungen/Rückzahlungen und weitere Konfliktklärung, automatische Text-/Bildprüfung, integrierte Zahlungen, E-Mail-Benachrichtigungen, Accountlöschung, Datenschutz-/Nutzungsinformationen für den tatsächlichen Betreiber und Backup-/Wiederherstellungsablauf. Verwaiste Uploads werden noch nicht automatisch gelöscht. Die Datenbank erzwingt maximal 40 Uploadreservierungen pro Nutzer und 24 Stunden; Storage akzeptiert nur reservierte Bildpfade innerhalb von zehn Minuten. Auch fehlgeschlagene Uploads zählen zur Quote. Direkte Tabellenzugriffe sind gesperrt. Für öffentliche Registrierung zusätzlichen Missbrauchsschutz einrichten. Daher zuerst mit einem kleinen geschlossenen Testkreis arbeiten.
+Noch offen: Stornierungen/Rückzahlungen und weitere Konfliktklärung, automatische Text-/Bildprüfung, integrierte Zahlungen, E-Mail-Benachrichtigungen, Accountlöschung, Nutzungsbedingungen, postalische Kontaktadresse, Dienstleisterverträge und Löschfristen sowie Backup-/Wiederherstellungsablauf. Verwaiste Uploads werden noch nicht automatisch gelöscht. Die Datenbank erzwingt maximal 40 Uploadreservierungen pro Nutzer und 24 Stunden; Storage akzeptiert nur reservierte Bildpfade innerhalb von zehn Minuten. Auch fehlgeschlagene Uploads zählen zur Quote. Direkte Tabellenzugriffe sind gesperrt. Für öffentliche Registrierung zusätzlichen Missbrauchsschutz einrichten. Daher zuerst mit einem kleinen geschlossenen Testkreis arbeiten.
 
 ## Herkunft
 
