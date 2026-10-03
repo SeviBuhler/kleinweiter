@@ -26,3 +26,20 @@
 @media (max-width: 700px) {
   .market.market-dialog { max-height: calc(100dvh - 32px); }
 }
+/* Keep mobile marketplace actions on one row, including signed-in accounts. */
+@media (max-width: 700px) {
+  .market > header { flex-wrap: nowrap; gap: 8px; padding: 20px 16px; }
+  .market > header .brand { flex-shrink: 0; }
+  .market > header nav { flex-wrap: nowrap; gap: 4px; flex-shrink: 0; }
+  .market > header nav > a,
+  .market > header nav > button { width: 44px; height: 44px; padding: 0; justify-content: center; flex-shrink: 0; }
+  .market > header .sell-button span,
+  .market > header .moderation-link span { display: none; }
+  .market > header .sell-button { border-radius: 50%; }
+}
+@media (max-width: 360px) {
+  .market > header { padding-inline: 8px; gap: 6px; }
+  .market > header .brand { font-size: 17px; }
+  .market > header .brand > svg { width: 20px; }
+  .market > header nav { gap: 0; }
+}
