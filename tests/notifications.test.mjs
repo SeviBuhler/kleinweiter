@@ -41,9 +41,19 @@ test('Transactional notifications: recipients, privacy, marking and auction sett
  assert.equal((await inbox()).items.filter(n=>n.kind==='purchased').length,1);
  await identity(other);assert.equal((await inbox()).items.filter(n=>n.kind==='outbid').length,1);
  await identity(seller);assert.equal((await inbox()).items.filter(n=>n.kind==='sold').length,1);
- const expired=await action({...listing,buy:null});const won=await action({...listing,buy:null});
+ const expired=await action({...listing,buy:null});const won=await action({...listing,buy:null});const future=await action(listing);
  await identity(buyer);await action({action:'bid',id:won.id,amount:100,confirm:true});
  await db.exec('reset role');await db.query('update public.listings set "end"=0 where id in ($1,$2)',[expired.id,won.id]);
+ await identity(buyer);await assert.rejects(rpc('settle_due_auctions'),/permission denied/);
+ await identity('');await assert.rejects(rpc('settle_due_auctions'),/permission denied/);
+ await db.exec('reset role');assert.equal(await rpc('settle_due_auctions'),2);assert.equal(await rpc('settle_due_auctions'),0);
+ // Inspect persisted outcomes before any visitor feed can perform fallback settlement.
+ assert.equal((await db.query('select status from public.listings where id=$1',[future.id])).rows[0].status,'active');
+ assert.equal((await db.query('select status from public.listings where id=$1',[expired.id])).rows[0].status,'expired');
+ assert.equal((await db.query('select status from public.listings where id=$1',[won.id])).rows[0].status,'sold');
+ assert.equal((await db.query('select count(*)::int n from public.orders where listing=$1',[won.id])).rows[0].n,1);
+ assert.equal((await db.query('select count(*)::int n from public.orders where listing=$1',[expired.id])).rows[0].n,0);
+ assert.equal((await db.query("select count(*)::int n from public.notifications where listing=$1 and kind='won'",[won.id])).rows[0].n,1);
  await identity(buyer);assert.equal((await inbox()).items.filter(n=>n.kind==='won').length,1);assert.equal((await inbox()).items.filter(n=>n.kind==='won').length,1);
  await identity(seller);assert.equal((await inbox()).items.filter(n=>n.kind==='expired').length,1);assert.equal((await inbox()).items.filter(n=>n.kind==='sold').length,2);
  const blocked=await action(listing);

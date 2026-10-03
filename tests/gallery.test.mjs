@@ -12,7 +12,7 @@ test('Gallery ownership, ordering, bid locks, migration and moderation snapshots
  create table storage.objects(id uuid default gen_random_uuid(),bucket_id text,name text);alter table storage.objects enable row level security;grant select,insert on storage.objects to anon,authenticated;
  create function storage.foldername(name text) returns text[] language sql as $$select string_to_array(name,'/')$$;`);
  const dir=new URL('../supabase/migrations/',import.meta.url),files=(await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();
- for(const f of files.slice(0,-1))await db.exec(await readFile(new URL(f,dir),'utf8'));
+ for(const f of files.filter(f=>f<'20261003000100'))await db.exec(await readFile(new URL(f,dir),'utf8'));
  const seller='11111111-1111-4111-8111-111111111111',buyer='22222222-2222-4222-8222-222222222222',mod='33333333-3333-4333-8333-333333333333';
  await db.query('insert into auth.users values($1,$2,now()),($3,$4,now()),($5,$6,now())',[seller,'seller@example.test',buyer,'buyer@example.test',mod,'mod@example.test']);await db.query('insert into public.moderators(id) values($1)',[mod]);
  const ids=Array.from({length:7},(_,i)=>`aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa${i}`);
@@ -23,7 +23,7 @@ test('Gallery ownership, ordering, bid locks, migration and moderation snapshots
  await identity(seller);for(const id of ids.slice(0,6)){await db.query('select public.register_upload($1)',[id]);await db.query("insert into storage.objects(bucket_id,name) values('product-images',$1)",[seller+'/'+id])}
  const listing={action:'create',title:'TEST Galerie ohne Verkaufsangebot',description:'Technischer Test ohne Produkt, Zahlung oder Lieferung.',age:1,category:'Spielsachen',condition:'Gut',size:'3 Jahre',location:'Zürich',delivery:'Keine Übergabe im Test',shipping:0,start:100,buy:3000,days:1,image:ids[0],childrenOnly:true};
  const legacy=await action(listing);
- await db.exec('reset role');await db.exec(await readFile(new URL(files.at(-1),dir),'utf8'));
+ await db.exec('reset role');for(const f of files.filter(f=>f>='20261003000100'))await db.exec(await readFile(new URL(f,dir),'utf8'));
  await identity(seller);assert.deepEqual((await feed(true)).items.find(i=>i.id===legacy.id).images,[ids[0]]);
  await assert.rejects(action({...listing,images:[]}));await assert.rejects(action({...listing,images:null}));await assert.rejects(action({...listing,images:[ids[1],ids[1]]}),/unterschiedliche/);await assert.rejects(action({...listing,images:ids.slice(0,6)}),/fünf/);
  await identity(buyer);await db.query('select public.register_upload($1)',[ids[6]]);await db.query("insert into storage.objects(bucket_id,name) values('product-images',$1)",[buyer+'/'+ids[6]]);

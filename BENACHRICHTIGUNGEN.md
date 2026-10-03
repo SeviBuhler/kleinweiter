@@ -18,7 +18,7 @@ Nachrichten entstehen durch einen PostgreSQL-Trigger auf Angebotsänderungen in 
 
 Die Glocke lädt beim Seitenaufruf und danach etwa alle 30 Sekunden in sichtbaren Tabs, zusätzlich bei Rückkehr in den Tab und nach eigenen Handelsaktionen. Nachrichten enthalten keine E-Mail-Adressen. Auf Moderationsseiten werden Nachrichten erst bei Rückkehr zum Marktplatz angezeigt.
 
-Der Auktionsabschluss wird weiterhin beim nächsten Markt-/Benachrichtigungsabruf vorgenommen. Ohne Seitenbesuch erfolgt noch kein Hintergrundabschluss; ein Scheduler ist ein separater nächster Schritt. Keine E-Mails, Browser-Pushs oder zusätzliche Versanddienst-Anbindung. Nachrichten bleiben gespeichert; automatische Aufbewahrungsfristen und Accountlöschung fehlen noch.
+Supabase Cron schliesst fällige Auktionen jede Minute auch ohne Seitenbesuch ab und erzeugt dabei die Nachrichten. Der bisherige Abschluss beim Markt-/Benachrichtigungsabruf bleibt als Absicherung bestehen. Betrieb: `AUKTIONSABSCHLUSS.md`. Keine E-Mails, Browser-Pushs oder zusätzliche Versanddienst-Anbindung. Nachrichten bleiben gespeichert; automatische Aufbewahrungsfristen und Accountlöschung fehlen noch.
 
 ## Prüfung
 

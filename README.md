@@ -4,7 +4,7 @@ Schweizer Secondhand-WebApp für Kinderartikel, aufgebaut auf dem vorhandenen De
 
 ## Verbundenes Projekt
 
-Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Alle acht Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
+Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Alle neun Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
 
 ## Lokal starten
 
@@ -71,11 +71,15 @@ Nur den öffentlichen Publishable-Key verwenden. **Keine Secret-, service_role- 
 
 Zahlung und Übergabe werden direkt vereinbart. Fotos lassen sich bei laufenden Inseraten ausschliesslich vor dem ersten Gebot ändern.
 
+## Zeitgesteuerter Auktionsabschluss
+
+Supabase Cron schliesst fällige Auktionen jede Minute ab, auch ohne Websitebesuch. Funktion und Zeitplan sind live geprüft. Auf einem frischen Projekt nach den Migrationen zusätzlich scripts/setup-auction-cron.sql als postgres ausführen. Betriebsdetails: AUKTIONSABSCHLUSS.md.
+
 ## Vor dem echten Pilotbetrieb prüfen
 
 Siehe `TESTPLAN.md`. Die bisherigen Tests ersetzen **keinen** Test mit echten Supabase-Konten und Vercel. Insbesondere Auth-E-Mails, Session-Erneuerung, tatsächliche Storage-Regeln und gleichzeitige Gebote auf dem gehosteten System prüfen.
 
-Noch offen: Stornierungen/Rückzahlungen und weitere Konfliktklärung, zeitgesteuerter Auktionsabschluss, automatische Text-/Bildprüfung, integrierte Zahlungen, E-Mail-Benachrichtigungen, Accountlöschung, Datenschutz-/Nutzungsinformationen für den tatsächlichen Betreiber und Backup-/Wiederherstellungsablauf. Verwaiste Uploads werden noch nicht automatisch gelöscht. Die Datenbank erzwingt maximal 40 Uploadreservierungen pro Nutzer und 24 Stunden; Storage akzeptiert nur reservierte Bildpfade innerhalb von zehn Minuten. Auch fehlgeschlagene Uploads zählen zur Quote. Direkte Tabellenzugriffe sind gesperrt. Für öffentliche Registrierung zusätzlichen Missbrauchsschutz einrichten. Daher zuerst mit einem kleinen geschlossenen Testkreis arbeiten.
+Noch offen: Stornierungen/Rückzahlungen und weitere Konfliktklärung, automatische Text-/Bildprüfung, integrierte Zahlungen, E-Mail-Benachrichtigungen, Accountlöschung, Datenschutz-/Nutzungsinformationen für den tatsächlichen Betreiber und Backup-/Wiederherstellungsablauf. Verwaiste Uploads werden noch nicht automatisch gelöscht. Die Datenbank erzwingt maximal 40 Uploadreservierungen pro Nutzer und 24 Stunden; Storage akzeptiert nur reservierte Bildpfade innerhalb von zehn Minuten. Auch fehlgeschlagene Uploads zählen zur Quote. Direkte Tabellenzugriffe sind gesperrt. Für öffentliche Registrierung zusätzlichen Missbrauchsschutz einrichten. Daher zuerst mit einem kleinen geschlossenen Testkreis arbeiten.
 
 ## Herkunft
 
