@@ -1,4 +1,4 @@
-# kleinweiter – Stand 2. Oktober 2026
+# kleinweiter – Stand 3. Oktober 2026
 
 Next.js/React/TypeScript, Vercel und Supabase ersetzen den ursprünglichen Vinext-/Cloudflare-Aufbau. Das Desktop-Original blieb unverändert. Eigene SVG-Illustrationen ersetzen fremde Inspirationsbilder.
 
@@ -6,7 +6,7 @@ Next.js/React/TypeScript, Vercel und Supabase ersetzen den ursprünglichen Vinex
 
 - GitHub: https://github.com/SeviBuhler/kleinweiter.git. Der Nutzer pusht lokale Commits selbst.
 - Website: https://kleinweiter.vercel.app. Supabase- und Google-Login-Variablen sind in Vercel gesetzt; Google-Anmeldung ist veröffentlicht.
-- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200`, `20261002000100`, `20261002000200`, `20261002000300`, `20261002000400` und `20261002000500` sind angewandt und registriert.
+- Supabase: `bhogyeublnutiyfjwmou`. Migrationen `20261001000100`, `20261001000200`, `20261002000100`, `20261002000200`, `20261002000300`, `20261002000400`, `20261002000500` und `20261003000100` sind angewandt und registriert.
 - Google-OAuth-Projekt: `kleinweiter-sevi-20261001`. Google-Anmeldung funktioniert mit beiden Testkonten. Freigabe für weitere Tester hängt vom Google-Audience-Status ab.
 - Keine Zugangsdaten im Git. Lokale Umgebungsdatei ist ignoriert. Kein service_role-Key in der App.
 
@@ -20,7 +20,7 @@ Neue Inseratverwaltung: eigene aktive Inserate lassen sich vor dem ersten Gebot 
 
 ## Prüfung
 
-Installation, Produktionsbuild und fünf automatische Tests erfolgreich. SQL-Tests prüfen mit zwei Identitäten Eigentum, Bearbeiten, veraltete Änderungen, Zurückziehen, Gebotssperren, Kauf und Kontaktrechte. Live-Supabase-Tests verwenden eine Transaktion mit vollständigem Rollback und bestanden ebenfalls.
+Installation, Produktionsbuild und sechs automatische Tests erfolgreich. SQL-Tests prüfen mit mehreren Identitäten Eigentum, Bearbeiten, veraltete Änderungen, Zurückziehen, Gebotssperren, Kauf, Kontaktrechte und Galerien. Live-Supabase-Tests verwenden eine Transaktion mit vollständigem Rollback und bestanden ebenfalls.
 
 Mit zwei echten Google-Konten wurden Anmeldung, Foto-Upload, Inseraterstellung und Eigentum geprüft. Ein ausdrücklich als Test markiertes Inserat erhielt ein gültiges Gebot; ein zu niedriges Gebot wurde abgelehnt. Der Sofortkauf wurde bestätigt und entfernte das Angebot aus der öffentlichen Suche. Es fand keine Zahlung statt. Kaufhistorie und gegenseitige Kontaktanzeige wurden auf beiden echten Kontoseiten bestätigt. Der Testartikel verbleibt als Verkaufshistorie. Ein zweiter klar markierter Testartikel wurde auf Vercel bearbeitet, nach Neuladen mit geändertem Titel geprüft und zurückgezogen. Abbrechen des Bestätigungsdialogs liess ihn aktiv. Nach Zurückziehen bleibt er im Konto sichtbar und fehlt im öffentlichen Feed (HTTP 200, leere Angebote).
 
@@ -51,6 +51,12 @@ Migration `20261002000400` ist angewandt und registriert. Fünf automatische Tes
 Fester Verkaufsstand für Preis, Versandkosten und Übergabebedingungen, eigene Käufer-/Verkäuferbestätigungen, Verlauf und Nachrichten. Nur Beteiligte können ihren Verkauf sehen und ihre zuständigen Schritte bestätigen. Alle vier Bestätigungen und keine offene Problemmeldung ergeben einen abgeschlossenen Ablauf. Problemmeldungen sind für beide Beteiligte sichtbar; die meldende Person kann ihr eigenes Problem begründet lösen. Keine automatische Bankprüfung, Stornierung oder Rückzahlung. Anleitung: `ABWICKLUNG.md`.
 
 Migration `20261002000500` ist angewandt und registriert. Bestehende Verkäufe erhalten offene Abläufe, ohne Zahlung oder Lieferung anzunehmen. Separater Support-Zugriff ist standardmässig ausgeschaltet und benötigt eine ausdrückliche Freischaltung. Support kann Probleme zu eigenen Verkäufen nicht selbst prüfen. Fünf automatische Tests mit bis zu vier Identitäten und Produktionsbuild bestanden. Live-Supabase-Tests mit vollständigem Rollback bestanden für festen Verkaufsstand, Rollen, veraltete Formulare, Problem-/Abschlussregeln, separate Support-Rechte und Nachrichten. Veröffentlichung und Browser-Test stehen noch aus.
+
+## Mehrere Produktfotos
+
+Bis zu fünf eigene Rasterfotos je Inserat, einzeln oder gemeinsam ausgewählt. Das erste Foto ist das Titelbild; im Formular sind Reihenfolge, Titelbild und Entfernen möglich. Produktdetails und Moderation zeigen eine Galerie mit Pfeilen, Zähler und Vorschaubildern. Bestehende Einzelfotos wurden übernommen. Nach dem ersten Gebot sind sämtliche Fotoänderungen in PostgreSQL gesperrt. Meldungen behalten alle damaligen Foto-IDs; entfernte Fotos bleiben für deren Prüfung zugänglich.
+
+Migration `20261003000100` ist angewandt und registriert. Sechs automatische Tests und Produktionsbuild bestanden. Der Live-Supabase-Test prüfte mehrere Fotos, öffentliche Anzeige, Reihenfolge/Titelbild, fremdes Eigentum, Gebotssperre und gesperrte interne Funktionen mit vollständigem Rollback. Kaufabwicklung und Galerie liegen lokal; Veröffentlichung und Browserprüfung mit zwei echten Konten stehen noch aus. Remote `main` war bei der Prüfung weiterhin auf `f1f88df`. Separater Support-Zugriff des Hauptkontos bleibt ausgeschaltet.
 
 ## Vor breiterem Einsatz
 

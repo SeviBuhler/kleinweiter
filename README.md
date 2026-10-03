@@ -4,7 +4,7 @@ Schweizer Secondhand-WebApp für Kinderartikel, aufgebaut auf dem vorhandenen De
 
 ## Verbundenes Projekt
 
-Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Alle sieben Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
+Das Supabase-Projekt `bhogyeublnutiyfjwmou` wurde eingerichtet. Alle acht Migrationen sind bereits angewandt und in der Migrationshistorie registriert. Nicht nochmals manuell ausführen. Lokale Verbindungswerte stehen in der Git-ignorierten `.env.local`; auf Vercel separat eintragen. Die Produktionsadresse ist https://kleinweiter.vercel.app. Der Supabase-Callback für die Veröffentlichung ist `https://kleinweiter.vercel.app/auth/callback`; localhost bleibt für lokale Entwicklung verfügbar.
 
 ## Lokal starten
 
@@ -57,7 +57,7 @@ Nur den öffentlichen Publishable-Key verwenden. **Keine Secret-, service_role- 
 
 - Fünf verpflichtende Alterswelten mit Farben und Formen: ab 1 Monat bis **unter** 3; 3 bis **unter** 6; 6 bis **unter** 10; 10 bis **unter** 13; 13 bis **einschliesslich** 16 Jahre. Die kurzen Namen `0–3` usw. sind Weltbezeichnungen; die genauen Grenzen stehen bei der Auswahl.
 - CHF-Preise in ganzzahligen Rappen, Suche, Kinderkategorien und Sortierung.
-- Google-Anmeldung (PKCE; siehe `GOOGLE-LOGIN.md`), optional E-Mail-Link-Anmeldung mit eigenem SMTP, öffentlicher Anzeigename, eigenes Inserat mit einem eigenen Produktfoto (JPG/PNG/WebP, maximal 4 MB wegen Vercels Request-Grenze).
+- Google-Anmeldung (PKCE; siehe `GOOGLE-LOGIN.md`), optional E-Mail-Link-Anmeldung mit eigenem SMTP, öffentlicher Anzeigename, eigenes Inserat mit bis zu fünf eigenen Produktfotos (JPG/PNG/WebP, maximal 4 MB je Foto wegen Vercels Request-Grenze). Reihenfolge und Titelbild wählbar; Galerie auch in der Moderation. Details: `FOTOS.md`.
 - Auktion mit CHF 1 Mindestschritt, optionaler Sofortkauf und expliziter Kaufbestätigung. Kein Bieten auf eigene Angebote.
 - Datenbanksperre pro Angebot und transaktionale Verarbeitung von Gebot und Verkauf. Ablauf wird nach Erwerb der Sperre erneut geprüft.
 - Eigene aktive Inserate vor dem ersten Gebot bearbeiten oder zurückziehen. Preis und Auktionsende bleiben unverändert; Versionsprüfung verhindert veraltete Änderungen.
@@ -69,7 +69,7 @@ Nur den öffentlichen Publishable-Key verwenden. **Keine Secret-, service_role- 
 - Private Bildablage: öffentliche Anzeige nur für Bilder, die an Inserate gebunden sind; unveröffentlichte Uploads sind nur für ihren Eigentümer lesbar.
 - Automatische Profilanlage bei neuer Registrierung; httpOnly-Sitzungscookies, Secure in Produktion, Origin-Prüfung bei API-Schreibzugriffen und Sicherheitsheader.
 
-Zahlung und Übergabe werden direkt vereinbart. Ein Produktfoto pro Inserat ist bewusst der kleine Startumfang.
+Zahlung und Übergabe werden direkt vereinbart. Fotos lassen sich bei laufenden Inseraten ausschliesslich vor dem ersten Gebot ändern.
 
 ## Vor dem echten Pilotbetrieb prüfen
 

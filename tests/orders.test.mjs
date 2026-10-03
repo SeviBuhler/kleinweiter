@@ -14,7 +14,7 @@ test('Sale workflow: frozen terms, participant permissions, disputes and complet
  create table storage.objects(id uuid default gen_random_uuid(),bucket_id text,name text);alter table storage.objects enable row level security;grant select,insert on storage.objects to anon,authenticated;
  create function storage.foldername(name text) returns text[] language sql as $$select string_to_array(name,'/')$$;`);
  const dir=new URL('../supabase/migrations/',import.meta.url),files=(await readdir(dir)).filter(f=>f.endsWith('.sql')).sort();
- for(const f of files.slice(0,-1))await db.exec(await readFile(new URL(f,dir),'utf8'));
+ for(const f of files.filter(f=>f<'20261002000500_order_progress.sql'))await db.exec(await readFile(new URL(f,dir),'utf8'));
  const seller='11111111-1111-4111-8111-111111111111',buyer='22222222-2222-4222-8222-222222222222',loser='33333333-3333-4333-8333-333333333333',mod='44444444-4444-4444-8444-444444444444',image='aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
  for(const [uid,email] of [[seller,'seller@example.test'],[buyer,'buyer@example.test'],[loser,'loser@example.test'],[mod,'mod@example.test']])await db.query('insert into auth.users values($1,$2,now())',[uid,email]);
  async function identity(id){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec(id?'set role authenticated':'set role anon')}
@@ -26,7 +26,8 @@ test('Sale workflow: frozen terms, participant permissions, disputes and complet
  const listing={action:'create',title:'TEST Abwicklung ohne Verkauf',description:'Nur technischer Test ohne Zahlung, Produkt oder Lieferung.',age:1,category:'Spielsachen',condition:'Gut',size:'3 Jahre',location:'Zürich',delivery:'Abholung nach Absprache',shipping:700,start:100,buy:3000,days:1,image,childrenOnly:true};
  await identity(seller);await rpc('register_upload',[image],'$1::uuid');await db.query("insert into storage.objects(bucket_id,name) values('product-images',$1)",[seller+'/'+image]);
  const legacy=await market(listing);await identity(buyer);await market({action:'buy',id:legacy.id,confirm:true});
- await db.exec('reset role');await db.exec(await readFile(new URL(files.at(-1),dir),'utf8'));
+ await db.exec('reset role');await db.exec(await readFile(new URL('20261002000500_order_progress.sql',dir),'utf8'));
+ for(const f of files.filter(f=>f>'20261002000500_order_progress.sql'))await db.exec(await readFile(new URL(f,dir),'utf8'));
  await db.query('insert into public.moderators(id) values($1),($2)',[mod,seller]);
  await identity(buyer);let order=(await orders(legacy.id)).orders[0];assert.equal(order.price,3000);assert.equal(order.shipping,700);assert.equal(order.role,'buyer');assert.equal(order.completed_at,null);assert.equal(order.paid_at,null);assert.equal(order.contact,'seller@example.test');
  await identity(seller);const sold=await market(listing),active=await market(listing);assert.equal((await orders(active.id)).orders.length,0);
